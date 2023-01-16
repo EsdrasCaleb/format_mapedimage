@@ -28,6 +28,9 @@
  */
 defined('MOODLE_INTERNAL') || die();
 
+ini_set('max_execution_time', '-1');
+set_time_limit(-1);
+
 use core_courseformat\base as course_format;
 
 require_once($CFG->dirroot . '/course/format/lib.php'); // For format_base.
@@ -42,7 +45,58 @@ require_once($CFG->dirroot . '/course/format/lib.php'); // For format_base.
 class format_mapedimage extends course_format {
 
     public function create_edit_form_elements(&$mform, $forsection = false) {
-        if (!$forsection && (empty($COURSE->id) || $COURSE->id == SITEID)) {
+        global $COURSE;
+        $elements = parent::create_edit_form_elements($mform, $forsection);
+
+        if (!(empty($COURSE->id) || $COURSE->id == SITEID)) {
+            $elements[] = $mform->addElement('header', 'previewareaheader',"Maped Image");
+            $mform->setExpanded('previewareaheader');
+            $elements[] = $mform->addElement('static', 'previewarea', '',
+                        "Preview");
+            $courseconfig = get_config('moodlecourse');
+            $mform->registerNoSubmitButton('refresh');
+            $max = (int)$courseconfig->maxsections;
+            $elements[] = $mform->addElement('select', 'numsections', "Numero de Seções", range(0, $max ?: 52));
+            $mform->setType('numsections', PARAM_INT);
+            $sections = $mform->getElementValue('numsections');
+            if (is_null($sections)) {
+                $mform->setDefault('numsections', $courseconfig->numsections);
+                $sections = $courseconfig->numsections;
+            }
+            
+            $elements[] = $mform->addElement('submit', 'refresh', "Recarregar");
+            $elements[] = $mform->addElement('filepicker', 'bgimage', "Image",
+                                                        null, self::file_picker_options());
+            $mform->closeHeaderBefore('dropzoneheader');
+
+            $elements[] = $mform->addElement('header', 'dropzoneheader', "Zona da Imagem");
+            var_dump($sections);
+            die("a");
+            for($i=0;$i<=$sections;$i++){
+                $elements[] = $mform->addElement('text', 'sec'.$i, "Secao ".$i);
+                $mform->setType('sec'.$i, PARAM_INT);
+            }
+            
+
         }
+
+        return $elements;
     }
+    
+    public static function file_picker_options() {
+        $filepickeroptions = array();
+        $filepickeroptions['accepted_types'] = array('web_image');
+        $filepickeroptions['maxbytes'] = 0;
+        $filepickeroptions['maxfiles'] = 1;
+        $filepickeroptions['subdirs'] = 0;
+        return $filepickeroptions;
+    }
+
+    public function get_settings() {
+        if (empty($this->settings) == true) {
+            $this->settings = $this->get_format_options();
+        }
+        return $this->settings;
+    }
+
 }
