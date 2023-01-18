@@ -58,7 +58,7 @@ class format_mapedimage extends course_format {
             $max = (int)$courseconfig->maxsections;
             $elements[] = $mform->addElement('select', 'numsections', "Numero de Seções", range(0, $max ?: 52));
             $mform->setType('numsections', PARAM_INT);
-            $sections = $mform->getElementValue('numsections');
+            $sections = $mform->getElementValue('numsections')[0];
             if (is_null($sections)) {
                 $mform->setDefault('numsections', $courseconfig->numsections);
                 $sections = $courseconfig->numsections;
@@ -70,8 +70,7 @@ class format_mapedimage extends course_format {
             $mform->closeHeaderBefore('dropzoneheader');
 
             $elements[] = $mform->addElement('header', 'dropzoneheader', "Zona da Imagem");
-            var_dump($sections);
-            die("a");
+
             for($i=0;$i<=$sections;$i++){
                 $elements[] = $mform->addElement('text', 'sec'.$i, "Secao ".$i);
                 $mform->setType('sec'.$i, PARAM_INT);
