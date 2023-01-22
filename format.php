@@ -14,41 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Trail Format - A topics based format that uses a trail of user selectable images to popup a light box of the section.
- *
- * @package    format_trail
- * @copyright  &copy; 2019 Jose Wilson  in respect to modifications of grid format.
- * @author     &copy; 2012 G J Barnard in respect to modifications of standard topics format.
- * @author     G J Barnard - {@link http://about.me/gjbarnard} and
- *                           {@link http://moodle.org/user/profile.php?id=442195}
- * @author     Based on code originally written by Paul Krix and Julian Ridden.
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
 defined('MOODLE_INTERNAL') || die();
 require_once($CFG->libdir . '/filelib.php');
 require_once($CFG->libdir . '/completionlib.php');
 
-// Horrible backwards compatible parameter aliasing..
-if ($topic = optional_param('topic', 0, PARAM_INT)) { // Topics and Trail old section parameter.
-    $url = $PAGE->url;
-    $url->param('section', $topic);
-    debugging('Outdated topic / trail param passed to course/view.php', DEBUG_DEVELOPER);
-    redirect($url);
-}
-if ($ctopic = optional_param('ctopics', 0, PARAM_INT)) { // Collapsed Topics old section parameter.
-    $url = $PAGE->url;
-    $url->param('section', $ctopic);
-    debugging('Outdated collapsed topic param passed to course/view.php', DEBUG_DEVELOPER);
-    redirect($url);
-}
-if ($week = optional_param('week', 0, PARAM_INT)) { // Weeks old section parameter.
-    $url = $PAGE->url;
-    $url->param('section', $week);
-    debugging('Outdated week param passed to course/view.php', DEBUG_DEVELOPER);
-    redirect($url);
-}
-// End backwards-compatible aliasing..
 
 $coursecontext = context_course::instance($course->id);
 
@@ -64,7 +33,7 @@ if (($marker >= 0) && has_capability('moodle/course:setcurrentsection', $coursec
 // Make sure all sections are created.
 course_create_sections_if_missing($course, range(0, $course->numsections));
 
-$renderer = $PAGE->get_renderer('format_trail');
+$renderer = $PAGE->get_renderer('format_mapedimage');
 
 $devicetype = core_useragent::get_device_type(); // In /lib/classes/useragent.php.
 if ($devicetype == "mobile") {
@@ -79,7 +48,7 @@ $renderer->set_portable($portable);
 $gfsettings = $courseformat->get_settings();
 $imageproperties = $courseformat->calculate_image_container_properties(
         $gfsettings['imagecontainerwidth'], $gfsettings['imagecontainerratio'], $gfsettings['borderwidth']);
-
+//hack csss
 echo '<style type="text/css" media="screen">';
 echo '/* <![CDATA[ */';
 echo ' #trailiconcontainer  ul.trailicons { position: relative;

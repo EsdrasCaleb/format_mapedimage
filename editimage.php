@@ -14,22 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Trail Format - A topics based format that uses a trail of user selectable images to popup a light box of the section.
- *
- * @package    format_trail
- * @copyright  &copy; 2019 Jose Wilson  in respect to modifications of grid format.
- * @author     &copy; 2012 G J Barnard in respect to modifications of standard topics format.
- * @author     G J Barnard - {@link http://about.me/gjbarnard} and
- *                           {@link http://moodle.org/user/profile.php?id=442195}
- * @author     Based on code originally written by Paul Krix and Julian Ridden.
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-/* Imports */
+
 require_once('../../../config.php');
 require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->dirroot . '/course/format/trail/editimage_form.php');
-require_once($CFG->dirroot . '/course/format/trail/lib.php');
+require_once($CFG->dirroot . '/course/format/mapedimage/editimage_form.php');
+require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
 
 /* Page parameters */
 $contextid = required_param('contextid', PARAM_INT);
@@ -43,7 +32,7 @@ $formdata->offset = optional_param('offset', null, PARAM_INT);
 $formdata->forcerefresh = optional_param('forcerefresh', null, PARAM_INT);
 $formdata->mode = optional_param('mode', null, PARAM_ALPHA);
 
-$url = new moodle_url('/course/format/trail/editimage.php', array(
+$url = new moodle_url('/course/format/mapedimage/editimage.php', array(
     'contextid' => $contextid,
     'id' => $id,
     'offset' => $formdata->offset,

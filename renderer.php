@@ -410,8 +410,23 @@ class format_mapedimage_renderer extends section_renderer {
             $trailiconsclass .= ' trailcursor';
         }
 
+        $bloqueado = 0;
+        $imageclass = 'main_image';
+        echo html_writer::start_tag('div', array('class' => $imageclass));
+        echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
+                            $contextid, $thissection, $trailimagepath, $this->output, $bloqueado);
+        echo html_writer::end_tag('div');
+
+        if ($editing) {
+            $this->make_block_icon_topics_editing($thissection, $contextid, $urlpicedit);
+        }
+
         echo html_writer::start_tag('ul', array('class' => $trailiconsclass));
         // Print all of the image containers.
+
+
+
+        
         $this->make_block_icon_topics($coursecontext->id, $sections, $course, $editing, $hascapvishidsect, $urlpicedit);
         echo html_writer::end_tag('ul');
 
@@ -923,7 +938,6 @@ class format_mapedimage_renderer extends section_renderer {
                         echo html_writer::start_tag('div', array('id' => $classcheck, 'title' => $titlecheck));
                         echo html_writer::end_tag('div');
                     } else {
-                        // Alteração por Jota.
                         $bloqueado = 0;
                         if ($this->settings['hidesectionlock'] == 3 || $this->settings['hidesectionlock'] == 4) {
                             $bloqueado = $this->get_section_availability_bloqueado($thissection,
@@ -961,7 +975,7 @@ class format_mapedimage_renderer extends section_renderer {
                     echo html_writer::end_tag('a');
 
                     if ($editing) {
-                        $this->make_block_icon_topics_editing($thissection, $contextid, $urlpicedit);
+                        //$this->make_block_icon_topics_editing($thissection, $contextid, $urlpicedit);
                     }
                     echo html_writer::end_tag('li');
                 } else {
@@ -1011,7 +1025,7 @@ class format_mapedimage_renderer extends section_renderer {
                             // Need an enclosing 'span' for IE.
                             echo html_writer::tag('span', $content);
                         }
-                        $this->make_block_icon_topics_editing($thissection, $contextid, $urlpicedit);
+                        //$this->make_block_icon_topics_editing($thissection, $contextid, $urlpicedit);
                     } else {
                         if (!$sectiongreyedout) {
                             echo html_writer::link($singlepageurl . '&section=' . $thissection->section, $content, array(
@@ -1088,12 +1102,11 @@ class format_mapedimage_renderer extends section_renderer {
     private function make_block_icon_topics_editing($thissection, $contextid, $urlpicedit) {
         global $USER;
 
-        $streditimage = get_string('editimage', 'format_trail');
-        $streditimagealt = get_string('editimage_alt', 'format_trail');
+        $streditimage = get_string('editimage', 'format_mapedimage');
+        $streditimagealt = get_string('editimage_alt', 'format_mapedimage');
 
         echo html_writer::link(
                 $this->courseformat->trail_moodle_url('editimage.php', array(
-                    'sectionid' => $thissection->id,
                     'contextid' => $contextid,
                     'userid' => $USER->id,
                     'role' => 'link',
@@ -1355,7 +1368,7 @@ class format_mapedimage_renderer extends section_renderer {
             $course->lastaccess = 0;
         }
 
-        $sql = "SELECT id, section FROM {$CFG->prefix}course_modules " .
+        $sql = "SELECT id, section FROM {course_modules} " .
                 "WHERE course = :courseid AND added > :lastaccess";
 
         $params = array(
