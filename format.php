@@ -64,7 +64,7 @@ if (($marker >= 0) && has_capability('moodle/course:setcurrentsection', $coursec
 // Make sure all sections are created.
 course_create_sections_if_missing($course, range(0, $course->numsections));
 
-$renderer = $PAGE->get_renderer('format_image');
+$renderer = $PAGE->get_renderer('format_trail');
 
 $devicetype = core_useragent::get_device_type(); // In /lib/classes/useragent.php.
 if ($devicetype == "mobile") {
@@ -76,7 +76,7 @@ if ($devicetype == "mobile") {
 }
 $renderer->set_portable($portable);
 
-$gfsettings = $courseformat->get_format_options();
+$gfsettings = $courseformat->get_settings();
 $imageproperties = $courseformat->calculate_image_container_properties(
         $gfsettings['imagecontainerwidth'], $gfsettings['imagecontainerratio'], $gfsettings['borderwidth']);
 
@@ -334,7 +334,6 @@ if ($sectionid) {
 } else {
     $sectionparam = optional_param('section', -1, PARAM_INT);
 }
-/*
 if ($sectionparam != -1) {
     if (($sectionparam == 0) && $courseformat->is_section0_attop() && ($gfsettings['setsection0ownpagenotrailonesection'] == 1)) {
         // Don't allow an old section 0 link to work.
@@ -348,7 +347,6 @@ if ($sectionparam != -1) {
         $displaysection = $sectionparam;
     }
 }
-*/
 
 if ($sectionparam != -1) {
     $renderer->print_single_section_page($course, null, null, null, null, $displaysection);
