@@ -418,7 +418,7 @@ class format_mapedimage_renderer extends section_renderer {
         echo html_writer::end_tag('div');
 
         if ($editing) {
-            $this->make_block_icon_topics_editing($thissection, $contextid, $urlpicedit);
+            $this->make_block_image_editing($course->id, $urlpicedit);
         }
 
         echo html_writer::start_tag('ul', array('class' => $trailiconsclass));
@@ -1092,6 +1092,34 @@ class format_mapedimage_renderer extends section_renderer {
     }
 
     /**
+     * Make course image.
+     *
+     * @param \stdClass $thissection
+     * @param int $contextid
+     * @param string $urlpicedit
+     * @return none
+     */
+    private function make_block_image_editing($courseid, $urlpicedit) {
+        global $USER;
+
+        $streditimage = get_string('editimage', 'format_mapedimage');
+        $streditimagealt = get_string('editimage_alt', 'format_mapedimage');
+
+        echo html_writer::link(
+                $this->courseformat->mapedimage_moodle_url('editimage.php', array(
+                    'courseid' => $courseid,
+                    'userid' => $USER->id,
+                    'role' => 'link',
+                    'aria-label' => $streditimagealt)
+                ), html_writer::empty_tag('img', array(
+                    'src' => $urlpicedit,
+                    'alt' => $streditimagealt,
+                    'role' => 'img',
+                    'aria-label' => $streditimagealt)) . '&nbsp;' . $streditimage, array('title' => $streditimagealt)
+        );
+    }
+
+    /**
      * Make topics icons.
      *
      * @param \stdClass $thissection
@@ -1106,7 +1134,7 @@ class format_mapedimage_renderer extends section_renderer {
         $streditimagealt = get_string('editimage_alt', 'format_mapedimage');
 
         echo html_writer::link(
-                $this->courseformat->trail_moodle_url('editimage.php', array(
+                $this->courseformat->mapedimage_moodle_url('editimage.php', array(
                     'contextid' => $contextid,
                     'userid' => $USER->id,
                     'role' => 'link',

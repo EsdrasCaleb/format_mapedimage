@@ -21,10 +21,8 @@ require_once($CFG->dirroot . '/course/format/mapedimage/editimage_form.php');
 require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
 
 /* Page parameters */
-$contextid = required_param('contextid', PARAM_INT);
-$sectionid = required_param('sectionid', PARAM_INT);
+$courseid = required_param('courseid', PARAM_INT);
 $id = optional_param('id', null, PARAM_INT);
-
 /* No idea, copied this from an example. Sets form data options but I don't know what they all do exactly */
 $formdata = new stdClass();
 $formdata->userid = required_param('userid', PARAM_INT);
@@ -33,7 +31,7 @@ $formdata->forcerefresh = optional_param('forcerefresh', null, PARAM_INT);
 $formdata->mode = optional_param('mode', null, PARAM_ALPHA);
 
 $url = new moodle_url('/course/format/mapedimage/editimage.php', array(
-    'contextid' => $contextid,
+    'courseid' => $courseid,
     'id' => $id,
     'offset' => $formdata->offset,
     'forcerefresh' => $formdata->forcerefresh,
@@ -41,33 +39,27 @@ $url = new moodle_url('/course/format/mapedimage/editimage.php', array(
     'mode' => $formdata->mode));
 
 /* Not exactly sure what this stuff does, but it seems fairly straightforward */
-list($context, $course, $cm) = get_context_info_array($contextid);
 
-require_login($course, true, $cm);
+require_login($course);
 if (isguestuser()) {
     die();
 }
-
+$context = context_course::instance($courseid);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 
-/* Functional part. Create the form and display it, handle results, etc */
-$options = array(
-    'subdirs' => 0,
-    'maxfiles' => 1,
-    'accepted_types' => array('gif', 'jpe', 'jpeg', 'jpg', 'png'),
-    'return_types' => FILE_INTERNAL);
-
-$mform = new trail_image_form(null, array(
-    'contextid' => $contextid,
-    'userid' => $formdata->userid,
-    'sectionid' => $sectionid,
-    'options' => $options));
-
+global $DB;
+$sections = $DB->get_records("course_sections",array("course"=>$courseid));
+$data = new \stdClass();
+$data->returnurl = $originalreturnurl;
+$mform = new mapedimage_image_form($url,  $context, $sections,$data);
+$mform->set_data($data);
 if ($mform->is_cancelled()) {
     // Someone has hit the 'cancel' button.
     redirect(new moodle_url($CFG->wwwroot . '/course/view.php?id=' . $course->id));
 } else if ($formdata = $mform->get_data()) { // Form has been submitted.
+    var_dump($formdata );
+    die("a");
     if ($formdata->deleteimage == 1) {
         // Delete the old images....
         $courseformat = course_get_format($course);

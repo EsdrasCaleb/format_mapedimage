@@ -22,7 +22,9 @@
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="id"/>
         <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="courseid"/>
-        <FIELD NAME="url" TYPE="text" LENGTH="2048" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="sectionid"/>
+        <FIELD NAME="xleft" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="courseid"/>
+        <FIELD NAME="ytop" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="xleft"/>
+        <FIELD NAME="url" TYPE="text" LENGTH="2048" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="ytop"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

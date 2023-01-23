@@ -2128,8 +2128,8 @@ class format_mapedimage extends course_format {
      * @param array $params URL parameters.
      * @return moodle_url The created URL.
      */
-    public function trail_moodle_url($url, array $params = null) {
-        return new moodle_url('/course/format/trail/' . $url, $params);
+    public function mapedimage_moodle_url($url, array $params = null) {
+        return new moodle_url('/course/format/mapedimage/' . $url, $params);
     }
 
     /**
@@ -2511,6 +2511,40 @@ class format_mapedimage extends course_format {
         }
 
         return $sectionimage;  // So that the caller can know the new value of displayedimageindex.
+    }
+
+
+    public function output_course_image($section, $sectionname, $sectionimage,
+        $contextid, $thissection, $trailimagepath, $output, $bloqueado = 0) {
+        global $CFG;
+        $content = '';
+        if (is_object($sectionimage) && ($sectionimage->displayedimageindex > 0)) {
+            $imgurl = moodle_url::make_pluginfile_url(
+                            $contextid, 'course', 'section', $thissection->id,
+                    $trailimagepath, $sectionimage->displayedimageindex . '_' . $sectionimage->image);
+            // Alterado por Jota.
+            if ($bloqueado > 0) {
+                $imgurl = $CFG->wwwroot . '/course/format/trail/pix/lock.png';
+            }
+            $content = html_writer::empty_tag('img', array(
+                        'src' => $imgurl,
+                        'alt' => $sectionname,
+                        'role' => 'img',
+                        'aria-label' => $sectionname));
+        } else if ($section == 0) {
+            $imgurl = $output->image_url('info', 'format_trail');
+            // Alterado por Jota.
+            if ($bloqueado > 0) {
+                $imgurl = $CFG->wwwroot . '/course/format/trail/pix/lock.png';
+            }
+            $content = html_writer::empty_tag('img', array(
+                        'src' => $imgurl,
+                        'alt' => $sectionname,
+                        'class' => 'info',
+                        'role' => 'img',
+                        'aria-label' => $sectionname));
+        }
+        return $content;
     }
 
     // Alterado por Jota.
