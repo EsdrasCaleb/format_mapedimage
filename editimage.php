@@ -23,12 +23,17 @@ require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
 /* Page parameters */
 $courseid = required_param('courseid', PARAM_INT);
 $id = optional_param('id', null, PARAM_INT);
-/* No idea, copied this from an example. Sets form data options but I don't know what they all do exactly */
+$image = optional_param('image', null, PARAM_INT);
+
+if($image){
+
 $formdata = new stdClass();
 $formdata->userid = required_param('userid', PARAM_INT);
 $formdata->offset = optional_param('offset', null, PARAM_INT);
 $formdata->forcerefresh = optional_param('forcerefresh', null, PARAM_INT);
 $formdata->mode = optional_param('mode', null, PARAM_ALPHA);
+
+$sectionid = 0;
 
 $url = new moodle_url('/course/format/mapedimage/editimage.php', array(
     'courseid' => $courseid,
@@ -42,61 +47,52 @@ $url = new moodle_url('/course/format/mapedimage/editimage.php', array(
 
 require_login($course);
 if (isguestuser()) {
-    die();
+    redirect($CFG->wwwroot);
 }
 $context = context_course::instance($courseid);
+$fileoptions = array('subdirs' => 0, 'maxfiles' => 1, 'maxbytes' => -1,'accepted_types' => array('gif', 'jpe', 'jpeg', 'jpg', 'png'),'context' => $context);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
 
 global $DB;
-$sections = $DB->get_records("course_sections",array("course"=>$courseid));
-$data = new \stdClass();
-$data->returnurl = $originalreturnurl;
-$mform = new mapedimage_image_form($url,  $context, $sections,$data);
-$mform->set_data($data);
+
+$args = array(
+    'context' => $context,
+    'attachmentoptions' => $fileoptions,
+	'id'=>$id
+);
+
+
+
+$mform = new mapedimage_image_form(null,$data);
 if ($mform->is_cancelled()) {
     // Someone has hit the 'cancel' button.
     redirect(new moodle_url($CFG->wwwroot . '/course/view.php?id=' . $course->id));
 } else if ($formdata = $mform->get_data()) { // Form has been submitted.
-    var_dump($formdata );
-    die("a");
-    if ($formdata->deleteimage == 1) {
-        // Delete the old images....
-        $courseformat = course_get_format($course);
-        $courseformat->delete_image($sectionid, $context->id);
-    } else if ($newfilename = $mform->get_new_filename('imagefile')) {
-        $fs = get_file_storage();
+    $filearea = 'mapedimage';
 
-        // We have a new file so can delete the old....
-        $courseformat = course_get_format($course);
-        $sectionimage = $courseformat->get_image($course->id, $sectionid);
-        if (isset($sectionimage->image)) {
-            if ($file = $fs->get_file($context->id, 'course', 'section', $sectionid, '/', $sectionimage->image)) {
-                $file->delete();
-            }
-        }
+    $data = file_postupdate_standard_filemanager($formdata, 'bgimage', $fileoptions, $context, "course", $filearea, 0);    
+}
+else{
 
-        // Resize the new image and save it...
-        $storedfilerecord = $courseformat->create_original_image_record($contextid, $sectionid, $newfilename);
-
-        $tempfile = $mform->save_stored_file(
-                'imagefile',
-                $storedfilerecord['contextid'],
-                $storedfilerecord['component'],
-                $storedfilerecord['filearea'],
-                $storedfilerecord['itemid'],
-                $storedfilerecord['filepath'],
-                'temp.' . $storedfilerecord['filename'],
-                true);
-
-        $courseformat->create_section_image($tempfile, $storedfilerecord, $sectionimage);
-    }
-    redirect($CFG->wwwroot . "/course/view.php?id=" . $course->id);
+    /* Draw the form */
+    echo $OUTPUT->header();
+    echo $OUTPUT->box_start('generalbox');
+    $mform->display();
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+    die();
+}
 }
 
-/* Draw the form */
-echo $OUTPUT->header();
-echo $OUTPUT->box_start('generalbox');
-$mform->display();
-echo $OUTPUT->box_end();
-echo $OUTPUT->footer();
+    echo $OUTPUT->header();
+    echo $OUTPUT->box_start('generalbox');
+    ?>
+    <canvas id="tutorial" width="800" height="600">
+        <img src="images/clock.png" width="150" height="150" alt=""/>
+    </canvas>
+
+    <?php
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+
