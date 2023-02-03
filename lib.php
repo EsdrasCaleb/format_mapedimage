@@ -3040,3 +3040,37 @@ function format_mapedimage_inplace_editable($itemtype, $itemid, $newvalue) {
                 $itemtype, $newvalue);
     }
 }
+
+function format_mapedimage_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options=array()){
+    $itemid = array_shift($args);
+
+
+
+
+    $filename = array_pop($args);
+
+    if (!$args) {
+
+        $filepath = '/';
+
+    } else {
+
+        $filepath = '/'.implode('/', $args).'/';
+
+    }
+
+    $fs = get_file_storage();
+
+	$file = $fs->get_file($context->id, 'format_mapedimage', $filearea, $itemid, $filepath, $filename);
+
+
+	if (!$file) {
+
+		return false;
+
+	}
+
+
+    send_stored_file($file, 86400, 0, $forcedownload, $options);
+
+}
