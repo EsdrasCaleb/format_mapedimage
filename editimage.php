@@ -108,7 +108,6 @@ else{
     <script>
         var canvas = document.getElementById('tutorial');
 
-
         if (canvas.getContext){
             var ctx = canvas.getContext('2d');
             var img = new Image();   // Create new img element
@@ -123,8 +122,6 @@ else{
                     width = (width*768)/height;
                     height = 768;
                 }
-                console.log(height);
-                console.log(width);
                 ctx.drawImage(img, 0,0,width,height);
             }, false);
             img.src = '<?php echo $mageUrl; ?>'; // Set source path
