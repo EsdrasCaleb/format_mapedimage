@@ -101,26 +101,49 @@ else{
     echo $OUTPUT->header();
     echo $OUTPUT->box_start('generalbox');
     ?>
-
+    <div class="text-center">
+        <a class="btn btn-lg btn-info" href="<?php echo $url; ?>">Editar Imagem</a>
+    </div>
+    <br/>
     <div class="text-center">
         <canvas id="canvas" width="1024" height="768">
         </canvas>
     </div>
-    <div class="text-center">
-        <a class="btn btn-lg btn-info" href="<?php echo $url; ?>">Editar Imagem</a>
-    </div>
+
     <?php if($mageUrl): ?>
+        <br/>
+        <hr/>
     <form id="formAreas" method="post">
     <div class="text-center" id="containerAdd">
-        <span class="containers">
+        <div class="containers row">
             <input type="hidden" name="x[]">
             <input type="hidden" name="y[]">
             <input type="hidden" name="weigth[]">
             <input type="hidden" name="heigth[]">
-            <select id="forma" name="forma">
+            <div class="col-2">
+                <input type="radio" name="selected[]" class="rdSelect" />
+                Selecionar
+            </div>
+            <div class="col-2">
+            <select class="cmbForma" name="forma">
+                <option value="square">Retangulo</option>
+                <option value="circulo">Circulo</option>
             </select>
+            </div>
+            <div class="col-2">
+                <select class="cmbTipo" name="tipo[]">
+                    <option value="link">Link</option>
+                    <option value="section">Secao</option>
+                </select>
+            </div>
+            <div class="col-sm">
+                <select class="section" name="sectuin[]">
+                    <option value="section">section</option>
+                </select>
+                <input class="url" name="url[]" type="text" value="" />
+            </div>
 
-        </span>
+        </div>
     </div>
     </form>
     <button id="btnAddMore">Adicionar Mais areas</button>
@@ -130,6 +153,45 @@ else{
         img.src = imageSource;
 
         document.querySelector("body").onload=  function(){
+            $("#btnAddMore").click(function(){
+                $("#containerAdd").append('<div class="containers row">'+
+            '<input type="hidden" name="x[]">'+
+            '<input type="hidden" name="y[]">'+
+            '<input type="hidden" name="weigth[]">'+
+            '<input type="hidden" name="heigth[]">'+
+            '<div class="col-2">'+
+                '<input type="radio" name="selected[]" class="rdSelect" />'+
+                'Selecionar'+
+            '</div>'+
+            '<div class="col-2">'+
+            '<select class="cmbForma" name="forma">'+
+                '<option value="square">Retangulo</option>'+
+                '<option value="circulo">Circulo</option>'+
+            '</select>'+
+            '</div>'+
+            '<div class="col-2">'+
+                '<select class="cmbTipo" name="tipo[]">'+
+                    '<option value="link">Link</option>'+
+                    '<option value="section">Secao</option>'+
+                '</select>'+
+            '</div>'+
+            '<div class="col-sm">'+
+                '<select class="section" name="sectuin[]">'+
+                    '<option value="section">section</option>'+
+                '</select>'+
+                '<input class="url" name="url[]" type="text" value="" />'+
+            '</div>'+
+            '<div class="col-1">'+
+            '    <button class="btnRemove">Remover</button>'+
+            '</div>'+
+        '</div>');
+                $(".containers:last .btnRemove").click(function(){
+                    $(this).parent().parent().remove()
+                })
+            })
+
+
+
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             var canvasOffset = $("#canvas").offset();
@@ -238,9 +300,6 @@ else{
                 var BB=canvas.getBoundingClientRect();
                 offsetX = BB.left;
                 offsetY = BB.top;
-                console.log(canvasOffset.top)
-                console.log(offsetX)
-                console.log(offsetY)
             })
             drawImage();
         }
