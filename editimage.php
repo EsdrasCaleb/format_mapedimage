@@ -16,6 +16,11 @@
 
 
 require_once('../../../config.php');
+require_login($course);
+if (isguestuser()) {
+    redirect($CFG->wwwroot);
+}
+
 require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->dirroot . '/course/format/mapedimage/editimage_form.php');
 require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
@@ -34,10 +39,8 @@ if($image){
 
 /* Not exactly sure what this stuff does, but it seems fairly straightforward */
 
-require_login($course);
-if (isguestuser()) {
-    redirect($CFG->wwwroot);
-}
+
+
 $fileoptions = array('subdirs' => 0, 'maxfiles' => 1, 'maxbytes' => -1,'accepted_types' => array('gif', 'jpe', 'jpeg', 'jpg', 'png'),'context' => $context);
 $PAGE->set_url($url);
 $PAGE->set_context($context);
@@ -81,17 +84,18 @@ else{
     $imageRecord = $DB->get_record_sql("SELECT * from {files} 
     where contextid={$context->id} and
     component= 'format_mapedimage' and filearea='section' and filename <>'.'");
+    if($imageRecord){
+        $mageUrl = moodle_url::make_pluginfile_url(
+            $imageRecord->contextid,
+            $imageRecord->component,
+            $imageRecord->filearea,
+            $imageRecord->itemid,
+            $imageRecord->filepath,
+            $imageRecord->filename,
+            false
 
-    $mageUrl = moodle_url::make_pluginfile_url(
-        $imageRecord->contextid,
-        $imageRecord->component,
-        $imageRecord->filearea,
-        $imageRecord->itemid,
-        $imageRecord->filepath,
-        $imageRecord->filename,
-        false
-
-    );
+        );
+    }
 
 
     echo $OUTPUT->header();
@@ -99,39 +103,150 @@ else{
     ?>
 
     <div class="text-center">
-        <canvas id="tutorial" width="1024" height="768">
+        <canvas id="canvas" width="1024" height="768">
         </canvas>
     </div>
     <div class="text-center">
         <a class="btn btn-lg btn-info" href="<?php echo $url; ?>">Editar Imagem</a>
     </div>
-    <script>
-        var canvas = document.getElementById('tutorial');
+    <?php if($mageUrl): ?>
+    <form id="formAreas" method="post">
+    <div class="text-center" id="containerAdd">
+        <span class="containers">
+            <input type="hidden" name="x[]">
+            <input type="hidden" name="y[]">
+            <input type="hidden" name="weigth[]">
+            <input type="hidden" name="heigth[]">
+            <select id="forma" name="forma">
+            </select>
 
-        if (canvas.getContext){
-            var ctx = canvas.getContext('2d');
-            var img = new Image();   // Create new img element
-            img.addEventListener('load', function() {
-                var width = img.naturalWidth; // this will be 300
-                var height = img.naturalHeight; // this will be 400
-                if(width>height && width>1024){
+        </span>
+    </div>
+    </form>
+    <button id="btnAddMore">Adicionar Mais areas</button>
+    <script>
+        imageSource = '<?php echo $mageUrl; ?>'; 
+        var img = new Image();   // Create new img element
+        img.src = imageSource;
+
+        document.querySelector("body").onload=  function(){
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            var canvasOffset = $("#canvas").offset();
+            var offsetX = canvasOffset.left;
+            var offsetY = canvasOffset.top;
+            var startX;
+            var startY;
+            var isDown = false;
+
+            function drawImage(){
+                var width = img.naturalWidth; // this will be 1024 at max
+                var height = img.naturalHeight; // this will be 1024 at max
+                if(width>1024){
                     heigth = (height*1024)/width;
                     width = 1024;
                 }
-                else if(width<height && height>768){
-                    width = (width*768)/height;
-                    height = 768;
-                }
                 ctx.drawImage(img, 0,0,width,height);
-            }, false);
-            img.src = '<?php echo $mageUrl; ?>'; // Set source path
+            }
 
+            function drawOval(x, y) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.beginPath();
+                ctx.moveTo(startX, startY + (y - startY) / 2);
+                ctx.bezierCurveTo(startX, startY, x, startY, x, startY + (y - startY) / 2);
+                ctx.bezierCurveTo(x, y, startX, y, startX, startY + (y - startY) / 2);
+                ctx.closePath();
+                ctx.stroke();
+            }
 
-        } else {
-            console.log("error");
+            function drawCircle(x,y){
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawImage();
+                ctx.beginPath();
+                var coordx = startX+((x-startX)/2);
+                var coordy = startY + ((y - startY) / 2);
+                var rad = ( Math.sqrt( ((startX-x)*(startX-x)) + ((startY-y)*(startY-y)) ) )/2
+                ctx.arc(coordx, coordy , rad,0, 2 * Math.PI);
+                ctx.stroke();
+            }
+
+            function drawRect(x,y){
+                ctx.globalAlpha = 1;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                drawImage();
+                ctx.beginPath();
+                var sizex = Math.abs(startX-x);
+                var sizey = Math.abs(startY-y);
+                var originx = startX>x?x:startX;
+                var originy = startY>y?y:startY;
+                ctx.rect(originx, originy, sizex, sizey);
+                ctx.stroke();
+                ctx.globalAlpha = 0.5;
+                ctx.fill();
+            }
+
+            function handleMouseDown(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                startX = parseInt(e.clientX - offsetX);
+                startY = parseInt(e.clientY - offsetY);
+                isDown = true;
+            }
+
+            function handleMouseUp(e) {
+                if (!isDown) {
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                isDown = false;
+            }
+
+            function handleMouseOut(e) {
+                if (!isDown) {
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                isDown = false;
+            }
+
+            function handleMouseMove(e) {
+                if (!isDown) {
+                    return;
+                }
+                e.preventDefault();
+                e.stopPropagation();
+                mouseX = parseInt(e.clientX - offsetX);
+                mouseY = parseInt(e.clientY - offsetY);
+                drawRect(mouseX, mouseY);
+            }
+
+            $("#canvas").mousedown(function (e) {
+                handleMouseDown(e);
+            });
+            $("#canvas").mousemove(function (e) {
+                handleMouseMove(e);
+            });
+            $("#canvas").mouseup(function (e) {
+                handleMouseUp(e);
+            });
+            $("#canvas").mouseout(function (e) {
+                handleMouseOut(e);
+            });
+            $("#page").scroll(function(e){
+                var BB=canvas.getBoundingClientRect();
+                offsetX = BB.left;
+                offsetY = BB.top;
+                console.log(canvasOffset.top)
+                console.log(offsetX)
+                console.log(offsetY)
+            })
+            drawImage();
         }
     </script>
     <?php
+    endif;
     echo $OUTPUT->box_end();
     echo $OUTPUT->footer();
 
