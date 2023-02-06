@@ -105,12 +105,12 @@ else{
         <a class="btn btn-lg btn-info" href="<?php echo $url; ?>">Editar Imagem</a>
     </div>
     <br/>
-    <div class="text-center">
-        <canvas id="canvas" width="1024" height="768">
-        </canvas>
-    </div>
 
     <?php if($mageUrl): ?>
+        <div class="text-center">
+        <canvas id="canvas" width="1024" >
+        </canvas>
+        </div>
         <br/>
         <hr/>
     <form id="formAreas" method="post">
@@ -121,7 +121,7 @@ else{
             <input type="hidden" name="weigth[]">
             <input type="hidden" name="heigth[]">
             <div class="col-2">
-                <input type="radio" name="selected[]" class="rdSelect" />
+                <input type="radio" checked="true" name="selected[]" class="rdSelect" />
                 Selecionar
             </div>
             <div class="col-2">
@@ -137,7 +137,7 @@ else{
                 </select>
             </div>
             <div class="col-sm">
-                <select class="section" name="sectuin[]">
+                <select class="section hidden" name="sectuin[]">
                     <option value="section">section</option>
                 </select>
                 <input class="url" name="url[]" type="text" value="" />
@@ -176,7 +176,7 @@ else{
                 '</select>'+
             '</div>'+
             '<div class="col-sm">'+
-                '<select class="section" name="sectuin[]">'+
+                '<select class="section hidden" name="sectuin[]">'+
                     '<option value="section">section</option>'+
                 '</select>'+
                 '<input class="url" name="url[]" type="text" value="" />'+
@@ -190,8 +190,13 @@ else{
                 })
             })
 
-
-
+            var imageWidth = img.naturalWidth; // this will be 1024 at max
+            var imageHeight = img.naturalHeight; // this will be 1024 at max
+            if(imageWidth>1024){
+                imageHeight = (imageHeight*1024)/imageWidth;
+                imageWidth = 1024;
+            }
+            $("#canvas").attr("height",imageHeight);
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             var canvasOffset = $("#canvas").offset();
@@ -202,13 +207,7 @@ else{
             var isDown = false;
 
             function drawImage(){
-                var width = img.naturalWidth; // this will be 1024 at max
-                var height = img.naturalHeight; // this will be 1024 at max
-                if(width>1024){
-                    heigth = (height*1024)/width;
-                    width = 1024;
-                }
-                ctx.drawImage(img, 0,0,width,height);
+                ctx.drawImage(img, 0,0,imageWidth,imageHeight);
             }
 
             function drawOval(x, y) {
