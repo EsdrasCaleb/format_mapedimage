@@ -121,13 +121,13 @@ else{
             <input type="hidden" name="weigth[]">
             <input type="hidden" name="heigth[]">
             <div class="col-2">
-                <input type="radio" checked="true" name="selected[]" class="rdSelect" />
+                <input type="radio" name="selected[]" class="rdSelect" />
                 Selecionar
             </div>
             <div class="col-2">
             <select class="cmbForma" name="forma">
-                <option value="square">Retangulo</option>
-                <option value="circulo">Circulo</option>
+                <option value="rect">Retangulo</option>
+                <option value="circle">Circulo</option>
             </select>
             </div>
             <div class="col-2">
@@ -153,6 +153,40 @@ else{
         img.src = imageSource;
 
         document.querySelector("body").onload=  function(){
+            var current_x = null
+            var current_y = null
+            var current_weigth = null
+            var current_heigth = null
+            var forma = null
+            var currentSelect = null
+
+            var newSelect = function(){
+                currentSelect = $(this)
+                forma = $(this).parent().next().children("select").val()  
+                current_heigth = $(this).parent().prev()
+                current_weigth = current_heigth.prev()
+                current_y = current_weigth.prev()
+                current_x = current_y.prev()
+            } 
+
+            var changeLink = function(){
+                    var pai = $(this).parent().next()
+                    console.log(pai)
+                    console.log(pai.children(".section"))
+                    console.log(pai.children(".url"))
+                    if(this.value=="link"){
+                        pai.children(".section").addClass("hidden")
+                        pai.children(".url").removeClass("hidden")
+                    }
+                    else{
+                        pai.children(".url").addClass("hidden")
+                        pai.children(".section").removeClass("hidden")
+                    }
+            }
+            $(".rdSelect").change(newSelect)
+            $(".rdSelect").click();
+            $(".cmbForma").change(()=>forma=this.value)
+            $(".cmbTipo").change(changeLink)
             $("#btnAddMore").click(function(){
                 $("#containerAdd").append('<div class="containers row">'+
             '<input type="hidden" name="x[]">'+
@@ -165,8 +199,8 @@ else{
             '</div>'+
             '<div class="col-2">'+
             '<select class="cmbForma" name="forma">'+
-                '<option value="square">Retangulo</option>'+
-                '<option value="circulo">Circulo</option>'+
+                '<option value="rect">Retangulo</option>'+
+                '<option value="circle">Circulo</option>'+
             '</select>'+
             '</div>'+
             '<div class="col-2">'+
@@ -188,6 +222,12 @@ else{
                 $(".containers:last .btnRemove").click(function(){
                     $(this).parent().parent().remove()
                 })
+                $(".rdSelect").off("change")
+                $(".rdSelect").change(newSelect)
+                $(".cmbForma").off("change")
+                $(".cmbForma").change(()=>forma=this.value)
+                $(".cmbTipo").off("change")
+                $(".cmbTipo").change(changeLink)
             })
 
             var imageWidth = img.naturalWidth; // this will be 1024 at max
@@ -205,36 +245,57 @@ else{
             var startX;
             var startY;
             var isDown = false;
+            
 
             function drawImage(){
                 ctx.drawImage(img, 0,0,imageWidth,imageHeight);
-            }
+                $(".rdSelect").each(function(){
+                    if($(this)==currentSelect)
+                        return true;
+                    var x =$(this).parent().prev().prev().prev().prev().val() 
+                    var y = $(this).parent().prev().prev().prev().val()
+                    ctx.moveTo(x,y)
+                    if($(this).parent().next().children("select").val() =="rect"){  
+                        ctx.rect(x,y,
+                        $(this).parent().prev().prev().val(), 
+                        $(this).parent().prev().val());
 
-            function drawOval(x, y) {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.beginPath();
-                ctx.moveTo(startX, startY + (y - startY) / 2);
-                ctx.bezierCurveTo(startX, startY, x, startY, x, startY + (y - startY) / 2);
-                ctx.bezierCurveTo(x, y, startX, y, startX, startY + (y - startY) / 2);
-                ctx.closePath();
-                ctx.stroke();
+                    }
+                    else{
+                        ctx.arc(x,y,
+                        $(this).parent().prev().val(),0, 2 * Math.PI);
+                    }
+                    ctx.stroke();
+                    ctx.globalAlpha = 0.5;
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                })
             }
 
             function drawCircle(x,y){
+                ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawImage();
                 ctx.beginPath();
+                ctx.moveTo(x,y)
                 var coordx = startX+((x-startX)/2);
                 var coordy = startY + ((y - startY) / 2);
                 var rad = ( Math.sqrt( ((startX-x)*(startX-x)) + ((startY-y)*(startY-y)) ) )/2
                 ctx.arc(coordx, coordy , rad,0, 2 * Math.PI);
                 ctx.stroke();
+                ctx.globalAlpha = 0.5;
+                ctx.fill();
+                current_heigth.val(rad)
+                current_weigth.val(rad)
+                current_y.val(coordy)
+                current_x.val(coordx)
             }
 
             function drawRect(x,y){
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawImage();
+                ctx.moveTo(x,y);
                 ctx.beginPath();
                 var sizex = Math.abs(startX-x);
                 var sizey = Math.abs(startY-y);
@@ -244,6 +305,10 @@ else{
                 ctx.stroke();
                 ctx.globalAlpha = 0.5;
                 ctx.fill();
+                current_heigth.val(sizey)
+                current_weigth.val(sizex)
+                current_y.val(originy)
+                current_x.val(originx)
             }
 
             function handleMouseDown(e) {
@@ -280,7 +345,10 @@ else{
                 e.stopPropagation();
                 mouseX = parseInt(e.clientX - offsetX);
                 mouseY = parseInt(e.clientY - offsetY);
-                drawRect(mouseX, mouseY);
+                if(forma=="rect")
+                    drawRect(mouseX, mouseY);
+                else
+                    drawCircle(mouseX, mouseY);
             }
 
             $("#canvas").mousedown(function (e) {
