@@ -16,23 +16,32 @@
 
 
 require_once('../../../config.php');
-require_login($course);
+global $DB,$PAGE;
 if (isguestuser()) {
     redirect($CFG->wwwroot);
 }
-
-require_once($CFG->dirroot . '/repository/lib.php');
-require_once($CFG->dirroot . '/course/format/mapedimage/editimage_form.php');
-require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
 
 /* Page parameters */
 $courseid = required_param('courseid', PARAM_INT);
 $id = optional_param('id', null, PARAM_INT);
 $image = optional_param('image', null, PARAM_INT);
 $context = context_course::instance($courseid);
+$course = $DB->get_record("course",array("id"=>$courseid));
+$PAGE->set_pagelayout("course");
+$PAGE->set_context($context);
+$PAGE->set_course($course);
+
 $url = new moodle_url('/course/format/mapedimage/editimage.php', array(
     'courseid' => $courseid,
     'image' => 1));
+$PAGE->set_url($url);
+
+require_login($course);
+
+require_once($CFG->dirroot . '/repository/lib.php');
+require_once($CFG->dirroot . '/course/format/mapedimage/editimage_form.php');
+require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
+
 
 if($image){
 
@@ -42,10 +51,9 @@ if($image){
 
 
 $fileoptions = array('subdirs' => 0, 'maxfiles' => 1, 'maxbytes' => -1,'accepted_types' => array('gif', 'jpe', 'jpeg', 'jpg', 'png'),'context' => $context);
-$PAGE->set_url($url);
-$PAGE->set_context($context);
 
-global $DB;
+
+
 
 $data = array(
     'context' => $context,
@@ -61,14 +69,17 @@ $data = new stdClass();
 $data->image = 1;
 $data->bgimage = 1;
 $data->id = 0;
+$filearea = 'section';
+
+file_prepare_standard_filemanager($data, 'bgimage', $fileoptions, $context, "format_mapedimage", $filearea, $courseid);    
 $mform->set_data($data);
 if ($mform->is_cancelled()) {
     // Someone has hit the 'cancel' button.
     redirect(new moodle_url($CFG->wwwroot . '/course/view.php?id=' . $course->id));
 } else if ($formdata = $mform->get_data()) { // Form has been submitted.
-    $filearea = 'section';
 
-    $data = file_postupdate_standard_filemanager($formdata, 'bgimage', $fileoptions, $context, "format_mapedimage", $filearea, 1);    
+
+    $data = file_postupdate_standard_filemanager($formdata, 'bgimage', $fileoptions, $context, "format_mapedimage", $filearea, $courseid);    
 }
 else{
 
@@ -81,8 +92,9 @@ else{
     die();
 }
 }
+
     $imageRecord = $DB->get_record_sql("SELECT * from {files} 
-    where contextid={$context->id} and
+    where contextid={$context->id} and itemid={$courseid} and
     component= 'format_mapedimage' and filearea='section' and filename <>'.'");
     if($imageRecord){
         $mageUrl = moodle_url::make_pluginfile_url(
@@ -96,7 +108,7 @@ else{
 
         );
     }
-
+    
 
     echo $OUTPUT->header();
     echo $OUTPUT->box_start('generalbox');

@@ -372,7 +372,7 @@ class format_mapedimage_renderer extends section_renderer {
      * @param array $modnamesused
      */
     public function print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
-        global $USER;
+        global $USER,$DB;
 
         $coursecontext = context_course::instance($course->id);
         $editing = $this->page->user_is_editing();
@@ -413,8 +413,33 @@ class format_mapedimage_renderer extends section_renderer {
         $bloqueado = 0;
         $imageclass = 'main_image';
         echo html_writer::start_tag('div', array('class' => $imageclass));
-        echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
+        $imageRecord = $DB->get_record_sql("SELECT * from {files} 
+        where contextid={$coursecontext->id} and itemid={$course->id} and
+        component= 'format_mapedimage' and filearea='section' and filename <>'.'");
+        if($imageRecord){
+            $mageUrl = moodle_url::make_pluginfile_url(
+                $imageRecord->contextid,
+                $imageRecord->component,
+                $imageRecord->filearea,
+                $imageRecord->itemid,
+                $imageRecord->filepath,
+                $imageRecord->filename,
+                false
+
+            );
+            echo html_writer::empty_tag('img', array(
+                'src' => $mageUrl,
+                'alt' => "mapedimage",
+                'class' => 'info',
+                'role' => 'img',
+                'style'=>"max-width: 1024px;",
+                'aria-label' => $course->fullname));
+            //TODO MAPED AREAS
+        }
+        else{
+            echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
                             $contextid, $thissection, $trailimagepath, $this->output, $bloqueado);
+        }
         echo html_writer::end_tag('div');
 
         if ($editing) {

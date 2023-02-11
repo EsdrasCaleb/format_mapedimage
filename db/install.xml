@@ -4,27 +4,12 @@
     xsi:noNamespaceSchemaLocation="../../../../lib/xmldb/xmldb.xsd"
 >
   <TABLES>
-    <TABLE NAME="format_mapedimage_image" COMMENT="images for maped image course format" NEXT="format_mapedimage_regions">
-      <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="image"/>
-        <FIELD NAME="image" TYPE="text" LENGTH="small" NOTNULL="true" SEQUENCE="false" PREVIOUS="id" NEXT="courseid"/>        
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="image"/>
-      </FIELDS>
-      <KEYS>
-        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
-      </KEYS>
-      <INDEXES>
-        <INDEX NAME="section" UNIQUE="true" FIELDS="sectionid"/>
-      </INDEXES>
-    </TABLE>
      <TABLE NAME="format_mapedimage_regions" COMMENT="images for maped image course format">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="id"/>
-        <FIELD NAME="sectionid" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="courseid"/>
         <FIELD NAME="xleft" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="courseid"/>
         <FIELD NAME="ytop" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="xleft"/>
-        <FIELD NAME="url" TYPE="text" LENGTH="2048" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="ytop"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
