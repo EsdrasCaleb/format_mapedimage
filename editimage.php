@@ -97,7 +97,7 @@ else{
     where contextid={$context->id} and itemid={$courseid} and
     component= 'format_mapedimage' and filearea='section' and filename <>'.'");
     if($imageRecord){
-        $mageUrl = moodle_url::make_pluginfile_url(
+        $imageUrl = moodle_url::make_pluginfile_url(
             $imageRecord->contextid,
             $imageRecord->component,
             $imageRecord->filearea,
@@ -118,7 +118,7 @@ else{
     </div>
     <br/>
 
-    <?php if($mageUrl): ?>
+    <?php if($imageUrl): ?>
         <div class="text-center">
         <canvas id="canvas" width="1024" >
         </canvas>
@@ -159,12 +159,19 @@ else{
     </div>
     </form>
     <button id="btnAddMore">Adicionar Mais areas</button>
+    <?php
+    endif;
+    echo $OUTPUT->box_end();
+    echo $OUTPUT->footer();
+    
+    if($imageUrl){
+        ?>
     <script>
-        imageSource = '<?php echo $mageUrl; ?>'; 
-        var img = new Image();   // Create new img element
+        imageSource = '<?php echo $imageUrl; ?>'; 
+        img = new Image();   // Create new img element
         img.src = imageSource;
 
-        document.querySelector("body").onload=  function(){
+        startImage = function(){
             var current_x = null
             var current_y = null
             var current_weigth = null
@@ -382,9 +389,16 @@ else{
             })
             drawImage();
         }
+        function checkVariable(){
+            if ( window.jQuery){
+                startImage()
+            }
+            else{
+                window.setTimeout("checkVariable();",100);
+            }
+        }
+        checkVariable();
     </script>
-    <?php
-    endif;
-    echo $OUTPUT->box_end();
-    echo $OUTPUT->footer();
+        <?php
+    }
 
