@@ -6,10 +6,14 @@
   <TABLES>
      <TABLE NAME="format_mapedimage_regions" COMMENT="images for maped image course format">
       <FIELDS>
-        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" NEXT="courseid"/>
-        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="id"/>
-        <FIELD NAME="xleft" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="courseid"/>
-        <FIELD NAME="ytop" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" COMMENT="Needed to identify records when deleting a course" PREVIOUS="xleft"/>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="true" />
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="false" SEQUENCE="false"  />
+        <FIELD NAME="xleft" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false"  />
+        <FIELD NAME="ytop" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" />
+        <FIELD NAME="weigth" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" />
+        <FIELD NAME="heigth" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" SEQUENCE="false" />
+        <FIELD NAME="form" TYPE="char" LENGTH="100" NOTNULL="false" UNSIGNED="false" DEFAULT="rect" SEQUENCE="false" />
+        <FIELD NAME="href" TYPE="char" LENGTH="255" NOTNULL="false" UNSIGNED="false" DEFAULT="#" SEQUENCE="false" />
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

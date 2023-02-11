@@ -154,6 +154,9 @@ else{
                 </select>
                 <input class="url" name="url[]" type="text" value="" />
             </div>
+            <div class="col-1">
+                <button disabled="true" class="btnRemove">Remover</button>
+            </div>
 
         </div>
     </div>
@@ -238,8 +241,15 @@ else{
             '    <button class="btnRemove">Remover</button>'+
             '</div>'+
         '</div>');
-                $(".containers:last .btnRemove").click(function(){
+                $(".containers .btnRemove").attr("disabled",null);
+                $(".containers .btnRemove").unbind("click");
+                $(".containers .btnRemove").click(function(){
                     $(this).parent().parent().remove()
+                    if($(".containers .btnRemove").length==1){
+                        $(".containers .btnRemove").attr("disabled",true);
+                        $(".containers .btnRemove").unbind("click");
+                        $(".rdSelect").click();
+                    }
                 })
                 $(".rdSelect").off("change")
                 $(".rdSelect").change(newSelect)
@@ -285,7 +295,7 @@ else{
                         $(this).parent().prev().val(),0, 2 * Math.PI);
                     }
                     ctx.stroke();
-                    ctx.globalAlpha = 0.5;
+                    ctx.globalAlpha = 0.3;
                     ctx.fill();
                     ctx.globalAlpha = 1;
                 })
@@ -302,7 +312,7 @@ else{
                 var rad = ( Math.sqrt( ((startX-x)*(startX-x)) + ((startY-y)*(startY-y)) ) )/2
                 ctx.arc(coordx, coordy , rad,0, 2 * Math.PI);
                 ctx.stroke();
-                ctx.globalAlpha = 0.5;
+                ctx.globalAlpha = 0.3;
                 ctx.fill();
                 current_heigth.val(rad)
                 current_weigth.val(rad)
@@ -322,7 +332,7 @@ else{
                 var originy = startY>y?y:startY;
                 ctx.rect(originx, originy, sizex, sizey);
                 ctx.stroke();
-                ctx.globalAlpha = 0.5;
+                ctx.globalAlpha = 0.3;
                 ctx.fill();
                 current_heigth.val(sizey)
                 current_weigth.val(sizex)

@@ -412,7 +412,8 @@ class format_mapedimage_renderer extends section_renderer {
 
         $bloqueado = 0;
         $imageclass = 'main_image';
-        echo html_writer::start_tag('div', array('class' => $imageclass));
+        echo html_writer::start_tag('div', array('class' => $imageclass,
+            'style'=>"max-width: 1024px;",));
         $imageRecord = $DB->get_record_sql("SELECT * from {files} 
         where contextid={$coursecontext->id} and itemid={$course->id} and
         component= 'format_mapedimage' and filearea='section' and filename <>'.'");
@@ -430,11 +431,17 @@ class format_mapedimage_renderer extends section_renderer {
             echo html_writer::empty_tag('img', array(
                 'src' => $mageUrl,
                 'alt' => "mapedimage",
+                "id"=>"imagemap",
                 'class' => 'info',
                 'role' => 'img',
-                'style'=>"max-width: 1024px;",
+                'style'=>"width: 100%;height: auto;",
                 'aria-label' => $course->fullname));
             //TODO MAPED AREAS
+            /*
+            $("#imagemap").get(0).naturalWidth //se maior que 1028 usar 1028
+            $("#imagemap").get(0).clientWidth
+            */
+            echo "<script></script>";
         }
         else{
             echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
