@@ -18,9 +18,6 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
-      <INDEXES>
-        <INDEX NAME="section" UNIQUE="true" FIELDS="sectionid"/>
-      </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

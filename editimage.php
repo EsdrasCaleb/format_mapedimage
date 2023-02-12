@@ -128,31 +128,31 @@ else{
     <form id="formAreas" method="post">
     <div class="text-center" id="containerAdd">
         <div class="containers row">
-            <input type="hidden" name="x[]">
-            <input type="hidden" name="y[]">
-            <input type="hidden" name="weigth[]">
-            <input type="hidden" name="heigth[]">
+            <input type="hidden" name="x">
+            <input type="hidden" name="y">
+            <input type="hidden" name="weigth">
+            <input type="hidden" name="heigth">
             <div class="col-2">
-                <input type="radio" name="selected[]" class="rdSelect" />
+                <input type="radio" name="selected" class="rdSelect" />
                 Selecionar
             </div>
             <div class="col-2">
-            <select class="cmbForma" name="forma">
+            <select class="cmbForma" name="form">
                 <option value="rect">Retangulo</option>
                 <option value="circle">Circulo</option>
             </select>
             </div>
             <div class="col-2">
-                <select class="cmbTipo" name="tipo[]">
+                <select class="cmbTipo" name="tipo">
                     <option value="link">Link</option>
                     <option value="section">Secao</option>
                 </select>
             </div>
             <div class="col-sm">
-                <select class="section hidden" name="sectuin[]">
+                <select class="section hidden" name="sectuin">
                     <option value="section">section</option>
                 </select>
-                <input class="url" name="url[]" type="text" value="" />
+                <input class="url" name="url" type="text" value="" />
             </div>
             <div class="col-1">
                 <button disabled="true" class="btnRemove">Remover</button>
@@ -211,31 +211,31 @@ else{
             $(".cmbTipo").change(changeLink)
             $("#btnAddMore").click(function(){
                 $("#containerAdd").append('<div class="containers row">'+
-            '<input type="hidden" name="x[]">'+
-            '<input type="hidden" name="y[]">'+
-            '<input type="hidden" name="weigth[]">'+
-            '<input type="hidden" name="heigth[]">'+
+            '<input type="hidden" name="x">'+
+            '<input type="hidden" name="y">'+
+            '<input type="hidden" name="weigth">'+
+            '<input type="hidden" name="heigth">'+
             '<div class="col-2">'+
-                '<input type="radio" name="selected[]" class="rdSelect" />'+
+                '<input type="radio" name="selected" class="rdSelect" />'+
                 'Selecionar'+
             '</div>'+
             '<div class="col-2">'+
-            '<select class="cmbForma" name="forma">'+
+            '<select class="cmbForma" name="form">'+
                 '<option value="rect">Retangulo</option>'+
                 '<option value="circle">Circulo</option>'+
             '</select>'+
             '</div>'+
             '<div class="col-2">'+
-                '<select class="cmbTipo" name="tipo[]">'+
+                '<select class="cmbTipo" name="tipo">'+
                     '<option value="link">Link</option>'+
                     '<option value="section">Secao</option>'+
                 '</select>'+
             '</div>'+
             '<div class="col-sm">'+
-                '<select class="section hidden" name="sectuin[]">'+
+                '<select class="section hidden" name="sectuin">'+
                     '<option value="section">section</option>'+
                 '</select>'+
-                '<input class="url" name="url[]" type="text" value="" />'+
+                '<input class="url" name="url" type="text" value="" />'+
             '</div>'+
             '<div class="col-1">'+
             '    <button class="btnRemove">Remover</button>'+
