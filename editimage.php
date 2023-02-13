@@ -261,24 +261,24 @@ else{
             var currentSelect = null
 
             var addId = function(data){
-                $("input").attr("disabled",false);
+                jQuery("input").attr("disabled",false);
                 if(data){
                     currentSelect.parent().parent().find(".btnRemove").attr("instance",data.id);
                 }
                 else {
-                    if($(".containers .btnRemove").length==1){
-                        $(".containers .btnRemove").attr("disabled",true);
-                        $(".containers .btnRemove").unbind("click");
+                    if(jQuery(".containers .btnRemove").length==1){
+                        jQuery(".containers .btnRemove").attr("disabled",true);
+                        jQuery(".containers .btnRemove").unbind("click");
                     }
-                    if($(".rdSelect:checked").length==0){
-                        $(".rdSelect:first").click();
+                    if(jQuery(".rdSelect:checked").length==0){
+                        jQuery(".rdSelect:first").click();
                     }
                     drawImage();
                 }
             }
 
             var sendData = function(removeid){
-                $("input").attr("disabled",true);
+                jQuery("input").attr("disabled",true);
                 if(removeid){
                     $.ajax({
                         type: "POST",
@@ -315,11 +315,11 @@ else{
             }
 
             var newSelect = function(){
-                currentSelect = $(this)
+                currentSelect = jQuery(this)
                 if(currentSelect){
-                    $(".rdSelect").prop('checked', false);
+                    jQuery(".rdSelect").prop('checked', false);
                     currentSelect.prop('checked', true);
-                    current_heigth = $(this).parent().prev()
+                    current_heigth = jQuery(this).parent().prev()
                     current_weigth = current_heigth.prev()
                     current_y = current_weigth.prev()
                     current_x = current_y.prev()
@@ -328,7 +328,7 @@ else{
             } 
 
             var changeLink = function(){
-                    var pai = $(this).parent().next()
+                    var pai = jQuery(this).parent().next()
                     pai.parent().find(".rdSelect").click()
                     if(this.value=="link"){
                         pai.children(".cmbSection").addClass("hidden")
@@ -343,26 +343,26 @@ else{
             }
 
             var changeUrl = function(){
-                $(this).parent().parent().find(".rdSelect").click();
+                jQuery(this).parent().parent().find(".rdSelect").click();
                 sendData(); 
             }
 
             function removeBindings(){
-                if($(".containers .btnRemove").length>1){
-                    $(".containers .btnRemove").attr("disabled",null);
-                    $(".containers .btnRemove").unbind("click");
-                    $(".containers .btnRemove").click(function(){
-                        var id = $(this).attr("instance");
+                if(jQuery(".containers .btnRemove").length>1){
+                    jQuery(".containers .btnRemove").attr("disabled",null);
+                    jQuery(".containers .btnRemove").unbind("click");
+                    jQuery(".containers .btnRemove").click(function(){
+                        var id = jQuery(this).attr("instance");
                         if(id){
                             sendData(id);
                         }
-                        $(this).parent().parent().remove()
-                        if($(".containers .btnRemove").length==1){
-                            $(".containers .btnRemove").attr("disabled",true);
-                            $(".containers .btnRemove").unbind("click");
+                        jQuery(this).parent().parent().remove()
+                        if(jQuery(".containers .btnRemove").length==1){
+                            jQuery(".containers .btnRemove").attr("disabled",true);
+                            jQuery(".containers .btnRemove").unbind("click");
                         }
-                        if($(".rdSelect:checked").length==0){
-                            $(".rdSelect:first").click();
+                        if(jQuery(".rdSelect:checked").length==0){
+                            jQuery(".rdSelect:first").click();
                         }
                         drawImage();
                     })
@@ -371,25 +371,25 @@ else{
 
             var changeForma = function(){
                 forma=this.value;
-                $(this).parent().parent().find(".rdSelect").click();
+                jQuery(this).parent().parent().find(".rdSelect").click();
             }
 
             function initiateBindings(){
-                $(".rdSelect").off("change")
-                $(".rdSelect").change(newSelect)
-                $(".cmbForma").off("change")
-                $(".cmbForma").change(changeForma)
-                $(".cmbTipo").off("change")
-                $(".cmbTipo").change(changeLink);
-                $(".cmbSection").off("change");
-                $(".cmbSection").change(changeUrl);
-                $(".url").off("change");
-                $(".url").change(changeUrl);
-                $(".rdSelect:last").click();
+                jQuery(".rdSelect").off("change")
+                jQuery(".rdSelect").change(newSelect)
+                jQuery(".cmbForma").off("change")
+                jQuery(".cmbForma").change(changeForma)
+                jQuery(".cmbTipo").off("change")
+                jQuery(".cmbTipo").change(changeLink);
+                jQuery(".cmbSection").off("change");
+                jQuery(".cmbSection").change(changeUrl);
+                jQuery(".url").off("change");
+                jQuery(".url").change(changeUrl);
+                jQuery(".rdSelect:last").click();
             }
 
-            $("#btnAddMore").click(function(){
-                $("#containerAdd").append('<form><div class="containers row">'+
+            jQuery("#btnAddMore").click(function(){
+                jQuery("#containerAdd").append('<form><div class="containers row">'+
             '<input type="hidden" name="x">'+
             '<input type="hidden" name="y">'+
             '<input type="hidden" name="weigth">'+
@@ -432,10 +432,10 @@ else{
                 imageHeight = (imageHeight*1024)/imageWidth;
                 imageWidth = 1024;
             }
-            $("#imgmapcanvas").attr("height",imageHeight);
+            jQuery("#imgmapcanvas").attr("height",imageHeight);
             var canvas = document.getElementById("imgmapcanvas");
             var ctx = canvas.getContext("2d");
-            var canvasOffset = $("#imgmapcanvas").offset();
+            var canvasOffset = jQuery("#imgmapcanvas").offset();
             var offsetX = canvasOffset.left;
             var offsetY = canvasOffset.top;
             var startX;
@@ -447,21 +447,21 @@ else{
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, imageWidth, imageHeight);
                 ctx.drawImage(img, 0,0,imageWidth,imageHeight);
-                $(".rdSelect").each(function(){
-                    if($(this)==currentSelect)
+                jQuery(".rdSelect").each(function(){
+                    if(jQuery(this)==currentSelect)
                         return true;
-                    var x =$(this).parent().prev().prev().prev().prev().val() 
-                    var y = $(this).parent().prev().prev().prev().val()
+                    var x =jQuery(this).parent().prev().prev().prev().prev().val() 
+                    var y = jQuery(this).parent().prev().prev().prev().val()
                     ctx.moveTo(x,y)
-                    if($(this).parent().next().children("select").val() =="rect"){  
+                    if(jQuery(this).parent().next().children("select").val() =="rect"){  
                         ctx.rect(x,y,
-                        $(this).parent().prev().prev().val(), 
-                        $(this).parent().prev().val());
+                        jQuery(this).parent().prev().prev().val(), 
+                        jQuery(this).parent().prev().val());
 
                     }
                     else{
                         ctx.arc(x,y,
-                        $(this).parent().prev().val(),0, 2 * Math.PI);
+                        jQuery(this).parent().prev().val(),0, 2 * Math.PI);
                     }
                     ctx.stroke();
                     ctx.globalAlpha = 0.3;
@@ -547,16 +547,16 @@ else{
                     drawCircle(mouseX, mouseY);         
             }
 
-            $("#imgmapcanvas").mousedown(function (e) {
+            jQuery("#imgmapcanvas").mousedown(function (e) {
                 handleMouseDown(e);
             });
-            $("#imgmapcanvas").mousemove(function (e) {
+            jQuery("#imgmapcanvas").mousemove(function (e) {
                 handleMouseMove(e);
             });
-            $("#imgmapcanvas").mouseup(function (e) {
+            jQuery("#imgmapcanvas").mouseup(function (e) {
                 handleMouseUp(e);
             });
-            $("#imgmapcanvas").mouseout(function (e) {
+            jQuery("#imgmapcanvas").mouseout(function (e) {
                 handleMouseOut(e);
             });
             scrolFunction = function(e){

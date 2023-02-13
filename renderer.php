@@ -446,7 +446,7 @@ class format_mapedimage_renderer extends section_renderer {
             echo '<map name="image-map">';
             foreach($regions as $region){
                 $classe ="areaclicks";
-                if(strpos($region->hrev,"#section-")===FALSE){
+                if(strpos($region->href,"#section-")===FALSE){
                     $classe ="";
                 }
                 $coords ="$region->xleft,$region->ytop,".$region->xleft+$region->weigth.",".

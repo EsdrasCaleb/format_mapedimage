@@ -3,11 +3,11 @@ require_once('../../../config.php');
 global $DB;
 $imageregions  = null;
 $exists = false;
-if($_POST["removeid"]){
+if(isset($_POST["removeid"])){
     $DB->delete_records("format_mapedimage_regions",array("id"=>$_POST["removeid"]));
     die("false");
 }
-elseif($_POST["id"]){   
+elseif(isset($_POST["id"])){   
     $imageregions = $DB->get_record("format_mapedimage_regions",array("id"=>$_POST["id"]));
     $exists = true;
 }
