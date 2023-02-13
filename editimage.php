@@ -262,7 +262,6 @@ else{
 
             var addId = function(data){
                 $("input").attr("disabled",false);
-                console.log(data);
                 if(data){
                     currentSelect.parent().parent().find(".btnRemove").attr("instance",data.id);
                 }
