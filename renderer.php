@@ -434,6 +434,7 @@ class format_mapedimage_renderer extends section_renderer {
                 "id"=>"imagemap",
                 'class' => 'info',
                 'role' => 'img',
+                'usemap'=>"#image-map",
                 'style'=>"width: 100%;height: auto;",
                 'aria-label' => $course->fullname));
             //TODO MAPED AREAS
@@ -441,7 +442,38 @@ class format_mapedimage_renderer extends section_renderer {
             $("#imagemap").get(0).naturalWidth //se maior que 1028 usar 1028
             $("#imagemap").get(0).clientWidth
             */
-            echo "<script></script>";
+            $regions = $DB->get_records("format_mapedimage_regions",array("courseid"=>$course->id));
+            echo '<map name="image-map">';
+            foreach($regions as $region){
+                $classe ="areaclicks";
+                if(strpos($region->hrev,"#section-")===FALSE){
+                    $classe ="";
+                }
+                $coords ="$region->xleft,$region->ytop,".$region->xleft+$region->weigth.",".
+                $region->ytop+$region->heigth;
+                if($region->form=="circle"){
+                    $coords ="$region->xleft,$region->ytop,".$region->weigth;
+                }
+                echo html_writer::empty_tag('area', array(
+                    'target' => "_blank",
+                    'alt' => "",
+                    "title"=>"",
+                    'class' => $classe,
+                    'shape' => $region->form,
+                    'coords'=>$coords,
+                    "href"=>$region->href
+                ));
+            }
+            echo '</map>';
+
+
+            echo "<script>
+            $(\".areaclicks\").click(function(e) {
+                e.preventDefault();
+                $($(this).attr(\"href\").replace(\"section\", \"trailsectionname\")).click();
+                $($(this).attr(\"href\")).get(0).scrollIntoView();
+            })
+            </script>";
         }
         else{
             echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
@@ -1139,10 +1171,7 @@ class format_mapedimage_renderer extends section_renderer {
 
         echo html_writer::link(
                 $this->courseformat->mapedimage_moodle_url('editimage.php', array(
-                    'courseid' => $courseid,
-                    'userid' => $USER->id,
-                    'role' => 'link',
-                    'aria-label' => $streditimagealt)
+                    'courseid' => $courseid)
                 ), html_writer::empty_tag('img', array(
                     'src' => $urlpicedit,
                     'alt' => $streditimagealt,

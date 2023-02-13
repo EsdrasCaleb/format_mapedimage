@@ -23,14 +23,12 @@ if (isguestuser()) {
 
 /* Page parameters */
 $courseid = required_param('courseid', PARAM_INT);
-$id = optional_param('id', null, PARAM_INT);
 $image = optional_param('image', null, PARAM_INT);
 $context = context_course::instance($courseid);
 $course = $DB->get_record("course",array("id"=>$courseid));
 $PAGE->set_pagelayout("course");
 $PAGE->set_context($context);
 $PAGE->set_course($course);
-
 $url = new moodle_url('/course/format/mapedimage/editimage.php', array(
     'courseid' => $courseid,
     'image' => 1));
@@ -58,7 +56,7 @@ $fileoptions = array('subdirs' => 0, 'maxfiles' => 1, 'maxbytes' => -1,'accepted
 $data = array(
     'context' => $context,
     'attachmentoptions' => $fileoptions,
-	'id'=>$id,
+    "id"=>$couseid,
     'courseid'=>$courseid,
 );
 
@@ -108,7 +106,6 @@ else{
 
         );
     }
-    
 
     echo $OUTPUT->header();
     echo $OUTPUT->box_start('generalbox');
@@ -118,15 +115,92 @@ else{
     </div>
     <br/>
 
-    <?php if($imageUrl): ?>
+    <?php if($imageUrl):
+        $coursesec = $DB->get_records("course_sections",array("course"=>$courseid));
+        $sections = "";
+        foreach($coursesec as $sec){
+            if($sec->section)
+                $sections .= "<option value='{$sec->section}'>".($sec->name?$sec->name:"Seção ".$sec->section)."</option>";
+        }
+        ?>
         <div class="text-center">
-        <canvas id="canvas" width="1024" >
+        <canvas id="imgmapcanvas" width="1024" >
         </canvas>
         </div>
         <br/>
         <hr/>
-    <form id="formAreas" method="post">
     <div class="text-center" id="containerAdd">
+        <?php
+        $regions = $DB->get_records("format_mapedimage_regions",array("courseid"=>$courseid));
+        if($regions){
+            foreach($regions as $region){
+                ?>
+        <form>
+        <div class="containers row">
+            <input type="hidden" value="<?php echo $region->xleft;?>" name="x">
+            <input type="hidden" value="<?php echo $region->ytop;?>" name="y">
+            <input type="hidden" value="<?php echo $region->weigth;?>" name="weigth">
+            <input type="hidden" value="<?php echo $region->heigth;?>" name="heigth">
+            <div class="col-2">
+                <input type="radio" name="selected" class="rdSelect" />
+                Selecionar
+            </div>
+            <div class="col-2">
+            <select class="cmbForma" name="form">
+                <option <?php echo $region->form=="rect"?"selected='true'":"";?>  value="rect">Retangulo</option>
+                <option <?php echo $region->form=="circle"?"selected='true'":"";?>  value="circle">Circulo</option>
+            </select>
+            </div>
+            <div class="col-2">
+                <?php
+                $secSelect = null;
+                $href = str_replace("#section-","",$region->href);
+                if(is_numeric($href)){
+                    $selectSecao = "selected='true'";
+                    $hideUrl = "hidden";
+                    $hideSecao = "";
+                    $selectUrl = "";
+                    $urlString = "";
+                }
+                else{
+                    $selectSecao = "";
+                    $hideUrl = "";
+                    $hideSecao = "hidden";
+                    $selectUrl = "selected='true'";
+                    $urlString = $region->href;
+                }
+                ?>
+                <select class="cmbTipo" name="tipo">
+                    <option <?php echo $selectUrl;?> value="link">Link</option>
+                    <option <?php echo $selectSecao; ?> value="section">Secao</option>
+                </select>
+            </div>
+            <div class="col-sm">
+                <select class="cmbSection <?php echo $hideSecao;?>" name="section">
+                    <?php 
+                    foreach($coursesec as $sec){
+                        if($sec->section){
+                            echo "<option ".($sec->section==$href?"selected='true'":"")." value='{$sec->section}'>".($sec->name?$sec->name:"Seção ".$sec->section)."</option>";
+                        }
+                    }
+
+                    
+                    ?>
+                </select>
+                <input class="url <?php echo $hideUrl;?>" value="<?php echo $urlString;?>" name="url" type="text" />
+            </div>
+            <div class="col-1">
+                <button disabled="true" instance="<?php echo $region->id; ?>" class="btnRemove">Remover</button>
+            </div>
+            
+        </div>
+        </form>
+        <?php
+            }
+        }
+        else{
+            ?>
+        <form>
         <div class="containers row">
             <input type="hidden" name="x">
             <input type="hidden" name="y">
@@ -149,18 +223,21 @@ else{
                 </select>
             </div>
             <div class="col-sm">
-                <select class="section hidden" name="sectuin">
-                    <option value="section">section</option>
+                <select class="cmbSection hidden" name="section">
+                    <?php echo $sections; ?>
                 </select>
                 <input class="url" name="url" type="text" value="" />
             </div>
             <div class="col-1">
                 <button disabled="true" class="btnRemove">Remover</button>
             </div>
-
+            
         </div>
+        </form>
+        <?php
+        }
+        ?>
     </div>
-    </form>
     <button id="btnAddMore">Adicionar Mais areas</button>
     <?php
     endif;
@@ -175,6 +252,7 @@ else{
         img.src = imageSource;
 
         startImage = function(){
+            var courseid = '<?php echo $courseid; ?>'; 
             var current_x = null
             var current_y = null
             var current_weigth = null
@@ -182,35 +260,133 @@ else{
             var forma = null
             var currentSelect = null
 
+            var addId = function(data){
+                $("input").attr("disabled",false);
+                if(data){
+                    currentSelect.parent().parent().find(".btnRemove").attr("instance",data.id);
+                }
+                else {
+                    if(removeid&&$(".containers .btnRemove").length==1){
+                        $(".containers .btnRemove").attr("disabled",true);
+                        $(".containers .btnRemove").unbind("click");
+                    }
+                }
+            }
+
+            var sendData = function(removeid){
+                $("input").attr("disabled",true);
+                if(removeid){
+                    $.ajax({
+                        type: "POST",
+                        url: "ajaxrequest.php",
+                        data: {"removeid":removeid},
+                        dataType:"json",
+                        success: addId,
+                    });
+                }
+                else{
+                    data = {}
+                    data.id = currentSelect.parent().parent().find(".btnRemove").attr("instance");
+                    data.xleft = current_x.val();
+                    data.ytop = current_y.val();
+                    data.weigth = current_weigth.val();
+                    data.heigth = current_heigth.val();
+                    data.form = forma;
+                    data.courseid=courseid;
+                    if(currentSelect.parent().parent().find(".cmbTipo").val()=="link"){
+                        data.href = currentSelect.parent().parent().find(".url").val();
+                    }
+                    else{
+                        data.href = "#section-"+currentSelect.parent().parent().find(".cmbSection").val();
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "ajaxrequest.php",
+                        data: data,
+                        dataType:"json",
+                        success: addId,
+                    });
+                }
+                
+            }
+
             var newSelect = function(){
                 currentSelect = $(this)
-                forma = $(this).parent().next().children("select").val()  
-                current_heigth = $(this).parent().prev()
-                current_weigth = current_heigth.prev()
-                current_y = current_weigth.prev()
-                current_x = current_y.prev()
+                if(currentSelect){
+                    $(".rdSelect").prop('checked', false);
+                    currentSelect.prop('checked', true);
+                    current_heigth = $(this).parent().prev()
+                    current_weigth = current_heigth.prev()
+                    current_y = current_weigth.prev()
+                    current_x = current_y.prev()
+                    forma = current_weigth.parent().find(".cmbForma").val()  
+                    console.log(forma)
+                }
             } 
 
             var changeLink = function(){
                     var pai = $(this).parent().next()
-                    console.log(pai)
-                    console.log(pai.children(".section"))
-                    console.log(pai.children(".url"))
+                    pai.parent().find(".rdSelect").click()
                     if(this.value=="link"){
-                        pai.children(".section").addClass("hidden")
+                        pai.children(".cmbSection").addClass("hidden")
                         pai.children(".url").removeClass("hidden")
                     }
                     else{
                         pai.children(".url").addClass("hidden")
-                        pai.children(".section").removeClass("hidden")
+                        pai.children(".cmbSection").removeClass("hidden")
                     }
+
+                    sendData()
             }
-            $(".rdSelect").change(newSelect)
-            $(".rdSelect").click();
-            $(".cmbForma").change(()=>forma=this.value)
-            $(".cmbTipo").change(changeLink)
+
+            var changeUrl = function(){
+                $(this).parent().parent().find(".rdSelect").click();
+                sendData(); 
+            }
+
+            function removeBindings(){
+                if($(".containers .btnRemove").length>1){
+                    $(".containers .btnRemove").attr("disabled",null);
+                    $(".containers .btnRemove").unbind("click");
+                    $(".containers .btnRemove").click(function(){
+                        var id = $(this).attr("instance");
+                        console.log(id);
+                        if(id){
+                            sendData(id);
+                        }
+                        $(this).parent().parent().remove()
+                        if($(".containers .btnRemove").length==1){
+                            $(".containers .btnRemove").attr("disabled",true);
+                            $(".containers .btnRemove").unbind("click");
+                        }
+                        if($(".rdSelect:checked").length==0){
+                            $(".rdSelect:first").click();
+                        }
+                    })
+                }
+            }
+
+            var changeForma = function(){
+                forma=this.value;
+                $(this).parent().parent().find(".rdSelect").click();
+            }
+
+            function initiateBindings(){
+                $(".rdSelect").off("change")
+                $(".rdSelect").change(newSelect)
+                $(".cmbForma").off("change")
+                $(".cmbForma").change(changeForma)
+                $(".cmbTipo").off("change")
+                $(".cmbTipo").change(changeLink);
+                $(".cmbSection").off("change");
+                $(".cmbSection").change(changeUrl);
+                $(".url").off("change");
+                $(".url").change(changeUrl);
+                $(".rdSelect:last").click();
+            }
+
             $("#btnAddMore").click(function(){
-                $("#containerAdd").append('<div class="containers row">'+
+                $("#containerAdd").append('<form><div class="containers row">'+
             '<input type="hidden" name="x">'+
             '<input type="hidden" name="y">'+
             '<input type="hidden" name="weigth">'+
@@ -232,32 +408,20 @@ else{
                 '</select>'+
             '</div>'+
             '<div class="col-sm">'+
-                '<select class="section hidden" name="sectuin">'+
-                    '<option value="section">section</option>'+
+                '<select class="cmbSection hidden" name="section">'+
+                    "<?php echo $sections; ?>"+
                 '</select>'+
                 '<input class="url" name="url" type="text" value="" />'+
             '</div>'+
             '<div class="col-1">'+
             '    <button class="btnRemove">Remover</button>'+
             '</div>'+
-        '</div>');
-                $(".containers .btnRemove").attr("disabled",null);
-                $(".containers .btnRemove").unbind("click");
-                $(".containers .btnRemove").click(function(){
-                    $(this).parent().parent().remove()
-                    if($(".containers .btnRemove").length==1){
-                        $(".containers .btnRemove").attr("disabled",true);
-                        $(".containers .btnRemove").unbind("click");
-                        $(".rdSelect").click();
-                    }
-                })
-                $(".rdSelect").off("change")
-                $(".rdSelect").change(newSelect)
-                $(".cmbForma").off("change")
-                $(".cmbForma").change(()=>forma=this.value)
-                $(".cmbTipo").off("change")
-                $(".cmbTipo").change(changeLink)
+        '</div></form>');
+                removeBindings();
+                initiateBindings();
             })
+            initiateBindings();
+            removeBindings();
 
             var imageWidth = img.naturalWidth; // this will be 1024 at max
             var imageHeight = img.naturalHeight; // this will be 1024 at max
@@ -265,10 +429,10 @@ else{
                 imageHeight = (imageHeight*1024)/imageWidth;
                 imageWidth = 1024;
             }
-            $("#canvas").attr("height",imageHeight);
-            var canvas = document.getElementById("canvas");
+            $("#imgmapcanvas").attr("height",imageHeight);
+            var canvas = document.getElementById("imgmapcanvas");
             var ctx = canvas.getContext("2d");
-            var canvasOffset = $("#canvas").offset();
+            var canvasOffset = $("#imgmapcanvas").offset();
             var offsetX = canvasOffset.left;
             var offsetY = canvasOffset.top;
             var startX;
@@ -305,8 +469,8 @@ else{
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawImage();
-                ctx.beginPath();
                 ctx.moveTo(x,y)
+                ctx.beginPath();
                 var coordx = startX+((x-startX)/2);
                 var coordy = startY + ((y - startY) / 2);
                 var rad = ( Math.sqrt( ((startX-x)*(startX-x)) + ((startY-y)*(startY-y)) ) )/2
@@ -355,6 +519,7 @@ else{
                 e.preventDefault();
                 e.stopPropagation();
                 isDown = false;
+                sendData(); 
             }
 
             function handleMouseOut(e) {
@@ -364,6 +529,7 @@ else{
                 e.preventDefault();
                 e.stopPropagation();
                 isDown = false;
+                sendData(); 
             }
 
             function handleMouseMove(e) {
@@ -377,29 +543,37 @@ else{
                 if(forma=="rect")
                     drawRect(mouseX, mouseY);
                 else
-                    drawCircle(mouseX, mouseY);
+                    drawCircle(mouseX, mouseY);         
             }
 
-            $("#canvas").mousedown(function (e) {
+            $("#imgmapcanvas").mousedown(function (e) {
                 handleMouseDown(e);
             });
-            $("#canvas").mousemove(function (e) {
+            $("#imgmapcanvas").mousemove(function (e) {
                 handleMouseMove(e);
             });
-            $("#canvas").mouseup(function (e) {
+            $("#imgmapcanvas").mouseup(function (e) {
                 handleMouseUp(e);
             });
-            $("#canvas").mouseout(function (e) {
+            $("#imgmapcanvas").mouseout(function (e) {
                 handleMouseOut(e);
             });
-            $("#page").scroll(function(e){
+            scrolFunction = function(e){
                 var BB=canvas.getBoundingClientRect();
                 offsetX = BB.left;
                 offsetY = BB.top;
-            })
+                
+            };
+            
+            document.addEventListener('scroll',scrolFunction);
             drawImage();
+
         }
+
+        img.addEventListener('load', checkVariable, false);
+
         function checkVariable(){
+            img.removeEventListener('load', checkVariable);
             if ( window.jQuery){
                 startImage()
             }
@@ -407,7 +581,9 @@ else{
                 window.setTimeout("checkVariable();",100);
             }
         }
-        checkVariable();
+
+
+        //checkVariable();
     </script>
         <?php
     }
