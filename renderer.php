@@ -476,8 +476,12 @@ class format_mapedimage_renderer extends section_renderer {
             </script>";
         }
         else{
-            echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
-                            $contextid, $thissection, $trailimagepath, $this->output, $bloqueado);
+            $imgurl = $CFG->wwwroot . '/course/format/trail/pix/lock.png';
+            }
+            $content = html_writer::empty_tag('img', array(
+                        'src' => $imgurl,
+                        'class' => 'info',
+                        'role' => 'img'));
         }
         echo html_writer::end_tag('div');
 
