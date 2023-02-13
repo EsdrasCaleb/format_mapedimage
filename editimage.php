@@ -262,14 +262,19 @@ else{
 
             var addId = function(data){
                 $("input").attr("disabled",false);
+                console.log(data);
                 if(data){
                     currentSelect.parent().parent().find(".btnRemove").attr("instance",data.id);
                 }
                 else {
-                    if(removeid&&$(".containers .btnRemove").length==1){
+                    if($(".containers .btnRemove").length==1){
                         $(".containers .btnRemove").attr("disabled",true);
                         $(".containers .btnRemove").unbind("click");
                     }
+                    if($(".rdSelect:checked").length==0){
+                        $(".rdSelect:first").click();
+                    }
+                    drawImage();
                 }
             }
 
@@ -320,7 +325,6 @@ else{
                     current_y = current_weigth.prev()
                     current_x = current_y.prev()
                     forma = current_weigth.parent().find(".cmbForma").val()  
-                    console.log(forma)
                 }
             } 
 
@@ -350,7 +354,6 @@ else{
                     $(".containers .btnRemove").unbind("click");
                     $(".containers .btnRemove").click(function(){
                         var id = $(this).attr("instance");
-                        console.log(id);
                         if(id){
                             sendData(id);
                         }
@@ -362,6 +365,7 @@ else{
                         if($(".rdSelect:checked").length==0){
                             $(".rdSelect:first").click();
                         }
+                        drawImage();
                     })
                 }
             }
@@ -440,7 +444,9 @@ else{
             var isDown = false;
             
 
-            function drawImage(){
+            drawImage =function(){
+                ctx.globalAlpha = 1;
+                ctx.clearRect(0, 0, imageWidth, imageHeight);
                 ctx.drawImage(img, 0,0,imageWidth,imageHeight);
                 $(".rdSelect").each(function(){
                     if($(this)==currentSelect)
@@ -466,8 +472,6 @@ else{
             }
 
             function drawCircle(x,y){
-                ctx.globalAlpha = 1;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawImage();
                 ctx.moveTo(x,y)
                 ctx.beginPath();
@@ -485,8 +489,6 @@ else{
             }
 
             function drawRect(x,y){
-                ctx.globalAlpha = 1;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 drawImage();
                 ctx.moveTo(x,y);
                 ctx.beginPath();

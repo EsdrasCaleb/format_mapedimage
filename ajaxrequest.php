@@ -5,7 +5,7 @@ $imageregions  = null;
 $exists = false;
 if($_POST["removeid"]){
     $DB->delete_records("format_mapedimage_regions",array("id"=>$_POST["removeid"]));
-    die("");
+    die("false");
 }
 elseif($_POST["id"]){   
     $imageregions = $DB->get_record("format_mapedimage_regions",array("id"=>$_POST["id"]));
