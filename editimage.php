@@ -273,6 +273,7 @@ else{
                     if(jQuery(".rdSelect:checked").length==0){
                         jQuery(".rdSelect:first").click();
                     }
+                    drawImage();
                 }
             }
 
@@ -363,6 +364,7 @@ else{
                         if(jQuery(".rdSelect:checked").length==0){
                             jQuery(".rdSelect:first").click();
                         }
+                        drawImage();
                     })
                 }
             }
@@ -443,7 +445,7 @@ else{
 
             drawImage =function(){
                 ctx.globalAlpha = 1;
-                ctx.clearRect(0, 0,  canvas.width, canvas.height);
+                ctx.clearRect(0, 0, imageWidth, imageHeight);
                 ctx.drawImage(img, 0,0,imageWidth,imageHeight);
                 jQuery(".rdSelect").each(function(){
                     if(jQuery(this)==currentSelect)
@@ -565,6 +567,8 @@ else{
             };
             
             document.addEventListener('scroll',scrolFunction);
+            $("#page").scroll(scrolFunction);
+            scrolFunction();
             drawImage();
 
         }
