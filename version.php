@@ -43,3 +43,6 @@ $plugin->maturity = MATURITY_BETA;
 
 // User-friendly version number.
 $plugin->release = '1.0.0.1';
+$plugin->dependencies = [
+    'format_trail' => ANY_VERSION,
+];
