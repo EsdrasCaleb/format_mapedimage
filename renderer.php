@@ -1825,7 +1825,7 @@ class format_mapedimage_renderer extends section_renderer {
             if (!$isstealth) {
                 if (has_capability('moodle/course:sectionvisibility', $coursecontext)) {
                     if ($section->visible) { // Show the hide/show eye.
-                        $strhidefromothers = get_string('hidefromothers', 'format_' . $course->format);
+                        $strhidefromothers = get_string('hidefromothers', 'format_trail');
                         $url->param('hide', $section->section);
                         $controls['visiblity'] = array(
                             'url' => $url,
@@ -1835,7 +1835,7 @@ class format_mapedimage_renderer extends section_renderer {
                             'attr' => array('class' => 'icon editing_showhide',
                                 'data-sectionreturn' => $sectionreturn, 'data-action' => 'hide'));
                     } else {
-                        $strshowfromothers = get_string('showfromothers', 'format_' . $course->format);
+                        $strshowfromothers = get_string('showfromothers', 'format_trail');
                         $url->param('show', $section->section);
                         $controls['visiblity'] = array(
                             'url' => $url,
