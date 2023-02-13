@@ -1,4 +1,4 @@
 <?php
-$string['pluginname'] = 'Formato Trilha com Imagem Maepada';
+$string['pluginname'] = 'Formato Trilha com Imagem Mapeada';
 $string['image'] = 'Imagem Para Mapear';
 $string['editimage'] = 'Modificar Imagem';
