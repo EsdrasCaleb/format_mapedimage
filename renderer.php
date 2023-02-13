@@ -1171,7 +1171,7 @@ class format_mapedimage_renderer extends section_renderer {
         global $USER;
 
         $streditimage = get_string('editimage', 'format_mapedimage');
-        $streditimagealt = get_string('editimage_alt', 'format_mapedimage');
+        $streditimagealt = get_string('editimage', 'format_mapedimage');
 
         echo html_writer::link(
                 $this->courseformat->mapedimage_moodle_url('editimage.php', array(
@@ -1196,7 +1196,7 @@ class format_mapedimage_renderer extends section_renderer {
         global $USER;
 
         $streditimage = get_string('editimage', 'format_mapedimage');
-        $streditimagealt = get_string('editimage_alt', 'format_mapedimage');
+        $streditimagealt = get_string('editimage', 'format_mapedimage');
 
         echo html_writer::link(
                 $this->courseformat->mapedimage_moodle_url('editimage.php', array(
