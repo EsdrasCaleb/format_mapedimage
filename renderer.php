@@ -477,7 +477,6 @@ class format_mapedimage_renderer extends section_renderer {
         }
         else{
             $imgurl = $CFG->wwwroot . '/course/format/trail/pix/lock.png';
-            }
             $content = html_writer::empty_tag('img', array(
                         'src' => $imgurl,
                         'class' => 'info',
