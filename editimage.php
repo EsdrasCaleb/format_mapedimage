@@ -260,6 +260,13 @@ else{
 
             var canvas = document.getElementById("imgmapcanvas");
             var ctx = canvas.getContext("2d");
+            var imageWidth = img.naturalWidth; // this will be 1024 at max
+            var imageHeight = img.naturalHeight; // this will be 1024 at max
+            if(imageWidth>1024){
+                imageHeight = (imageHeight*1024)/imageWidth;
+                imageWidth = 1024;
+            }
+            jQuery("#imgmapcanvas").attr("height",imageHeight);
 
             drawImage =function(){
                 ctx.globalAlpha = 1;
@@ -464,13 +471,7 @@ else{
             initiateBindings();
             removeBindings();
 
-            var imageWidth = img.naturalWidth; // this will be 1024 at max
-            var imageHeight = img.naturalHeight; // this will be 1024 at max
-            if(imageWidth>1024){
-                imageHeight = (imageHeight*1024)/imageWidth;
-                imageWidth = 1024;
-            }
-            jQuery("#imgmapcanvas").attr("height",imageHeight);
+
 
             var canvasOffset = jQuery("#imgmapcanvas").offset();
             var offsetX = canvasOffset.left;
