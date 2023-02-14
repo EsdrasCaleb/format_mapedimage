@@ -455,20 +455,22 @@ else{
                     }
                     var x =jQuery(this).parent().prev().prev().prev().prev().val() 
                     var y = jQuery(this).parent().prev().prev().prev().val()
-                    ctx.moveTo(x,y)
-                    if(jQuery(this).parent().next().children("select").val() =="rect"){  
-                        ctx.rect(x,y,
+                    let region = new Path2D();
+                    region.moveTo(x,y)
+                    ctx.globalAlpha = 0.3;
+                    if(jQuery(this).parent().next().children("select").val() =="rect"){
+                        region.rect(x,y,
                         jQuery(this).parent().prev().prev().val(), 
                         jQuery(this).parent().prev().val());
 
                     }
                     else{
-                        ctx.arc(x,y,
+                        region.arc(x,y,
                         jQuery(this).parent().prev().val(),0, 2 * Math.PI);
                     }
+                    region.closePath();
                     ctx.stroke();
-                    ctx.globalAlpha = 0.3;
-                    ctx.fill();
+                    ctx.fill(region);
                     ctx.globalAlpha = 1;
                 })
                 ctx.fillStyle = "#950F0FFF";
@@ -476,15 +478,16 @@ else{
 
             function drawCircle(x,y){
                 drawImage();
-                ctx.moveTo(x,y)
-                ctx.beginPath();
+                let region = new Path2D();
+                region.moveTo(x,y)
                 var coordx = startX+((x-startX)/2);
                 var coordy = startY + ((y - startY) / 2);
                 var rad = ( Math.sqrt( ((startX-x)*(startX-x)) + ((startY-y)*(startY-y)) ) )/2
-                ctx.arc(coordx, coordy , rad,0, 2 * Math.PI);
+                region.arc(coordx, coordy , rad,0, 2 * Math.PI);
                 ctx.stroke();
                 ctx.globalAlpha = 0.3;
-                ctx.fill();
+                region.closePath();
+                ctx.fill(region);
                 current_heigth.val(rad)
                 current_weigth.val(rad)
                 current_y.val(coordy)
@@ -493,16 +496,17 @@ else{
 
             function drawRect(x,y){
                 drawImage();
-                ctx.moveTo(x,y);
-                ctx.beginPath();
+                let region = new Path2D();
+                region.moveTo(x,y)
                 var sizex = Math.abs(startX-x);
                 var sizey = Math.abs(startY-y);
                 var originx = startX>x?x:startX;
                 var originy = startY>y?y:startY;
-                ctx.rect(originx, originy, sizex, sizey);
+                region.rect(originx, originy, sizex, sizey);
+                region.closePath();
                 ctx.stroke();
                 ctx.globalAlpha = 0.3;
-                ctx.fill();
+                ctx.fill(region);
                 current_heigth.val(sizey)
                 current_weigth.val(sizex)
                 current_y.val(originy)
