@@ -445,10 +445,14 @@ else{
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0,0,imageWidth,imageHeight);
-                ctx.fillStyle = "#595959";
+
                 jQuery(".rdSelect").each(function(){
-                    if(jQuery(this)==currentSelect)
-                        return true;
+                    if(this==currentSelect.get(0)) {
+                        ctx.fillStyle = "#950F0FFF";
+                    }
+                    else{
+                        ctx.fillStyle = "#595959";
+                    }
                     var x =jQuery(this).parent().prev().prev().prev().prev().val() 
                     var y = jQuery(this).parent().prev().prev().prev().val()
                     ctx.moveTo(x,y)
