@@ -457,7 +457,7 @@ else{
                     var y = jQuery(this).parent().prev().prev().prev().val()
                     let region = new Path2D();
                     region.moveTo(x,y)
-                    ctx.globalAlpha = 0.5;
+
                     if(jQuery(this).parent().next().children("select").val() =="rect"){
                         region.rect(x,y,
                         jQuery(this).parent().prev().prev().val(), 
@@ -469,6 +469,7 @@ else{
                         jQuery(this).parent().prev().val(),0, 2 * Math.PI);
                     }
                     region.closePath();
+                    ctx.globalAlpha = 0.7;
                     ctx.stroke(region);
                     ctx.fill(region);
                     ctx.globalAlpha = 1;
