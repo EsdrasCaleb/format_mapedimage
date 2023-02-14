@@ -40,8 +40,10 @@ require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->dirroot . '/course/format/mapedimage/editimage_form.php');
 require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
 
-
-if($image){
+$imageRecord = $DB->get_record_sql("SELECT * from {files} 
+    where contextid={$context->id} and itemid={$courseid} and
+    component= 'format_mapedimage' and filearea='section' and filename <>'.'");
+if($image||!$imageRecord){
 
 
 /* Not exactly sure what this stuff does, but it seems fairly straightforward */
@@ -90,10 +92,6 @@ else{
     die();
 }
 }
-
-    $imageRecord = $DB->get_record_sql("SELECT * from {files} 
-    where contextid={$context->id} and itemid={$courseid} and
-    component= 'format_mapedimage' and filearea='section' and filename <>'.'");
     if($imageRecord){
         $imageUrl = moodle_url::make_pluginfile_url(
             $imageRecord->contextid,
@@ -447,6 +445,7 @@ else{
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, imageWidth, imageHeight);
                 ctx.drawImage(img, 0,0,imageWidth,imageHeight);
+                ctx.fillStyle = "#0";
                 jQuery(".rdSelect").each(function(){
                     if(jQuery(this)==currentSelect)
                         return true;
@@ -468,6 +467,7 @@ else{
                     ctx.fill();
                     ctx.globalAlpha = 1;
                 })
+                ctx.fillStyle = "#FF0000";
             }
 
             function drawCircle(x,y){
