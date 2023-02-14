@@ -443,9 +443,9 @@ else{
 
             drawImage =function(){
                 ctx.globalAlpha = 1;
-                ctx.clearRect(0, 0, imageWidth, imageHeight);
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.drawImage(img, 0,0,imageWidth,imageHeight);
-                ctx.fillStyle = "#0";
+                ctx.fillStyle = "#595959";
                 jQuery(".rdSelect").each(function(){
                     if(jQuery(this)==currentSelect)
                         return true;
@@ -467,7 +467,7 @@ else{
                     ctx.fill();
                     ctx.globalAlpha = 1;
                 })
-                ctx.fillStyle = "#FF0000";
+                ctx.fillStyle = "#950F0FFF";
             }
 
             function drawCircle(x,y){
