@@ -258,6 +258,9 @@ else{
             var forma = null
             var currentSelect = null
 
+            var canvas = document.getElementById("imgmapcanvas");
+            var ctx = canvas.getContext("2d");
+
             drawImage =function(){
                 ctx.globalAlpha = 1;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -468,8 +471,7 @@ else{
                 imageWidth = 1024;
             }
             jQuery("#imgmapcanvas").attr("height",imageHeight);
-            var canvas = document.getElementById("imgmapcanvas");
-            var ctx = canvas.getContext("2d");
+
             var canvasOffset = jQuery("#imgmapcanvas").offset();
             var offsetX = canvasOffset.left;
             var offsetY = canvasOffset.top;
