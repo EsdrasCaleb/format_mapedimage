@@ -258,6 +258,42 @@ else{
             var forma = null
             var currentSelect = null
 
+            drawImage =function(){
+                ctx.globalAlpha = 1;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0,0,imageWidth,imageHeight);
+
+                jQuery(".rdSelect").each(function(){
+                    if(this==currentSelect.get(0)) {
+                        ctx.fillStyle = "#950F0FFF";
+                    }
+                    else{
+                        ctx.fillStyle = "#595959";
+                    }
+                    var x =jQuery(this).parent().prev().prev().prev().prev().val()
+                    var y = jQuery(this).parent().prev().prev().prev().val()
+                    let region = new Path2D();
+                    region.moveTo(x,y)
+
+                    if(jQuery(this).parent().next().children("select").val() =="rect"){
+                        region.rect(x,y,
+                            jQuery(this).parent().prev().prev().val(),
+                            jQuery(this).parent().prev().val());
+
+                    }
+                    else{
+                        region.arc(x,y,
+                            jQuery(this).parent().prev().val(),0, 2 * Math.PI);
+                    }
+                    region.closePath();
+                    ctx.globalAlpha = 0.7;
+                    ctx.stroke(region);
+                    ctx.fill(region);
+                    ctx.globalAlpha = 1;
+                })
+                ctx.fillStyle = "#950F0FFF";
+            }
+
             var addId = function(data){
                 jQuery("input").attr("disabled",false);
                 if(data){
@@ -440,43 +476,7 @@ else{
             var startX;
             var startY;
             var isDown = false;
-            
 
-            drawImage =function(){
-                ctx.globalAlpha = 1;
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.drawImage(img, 0,0,imageWidth,imageHeight);
-
-                jQuery(".rdSelect").each(function(){
-                    if(this==currentSelect.get(0)) {
-                        ctx.fillStyle = "#950F0FFF";
-                    }
-                    else{
-                        ctx.fillStyle = "#595959";
-                    }
-                    var x =jQuery(this).parent().prev().prev().prev().prev().val() 
-                    var y = jQuery(this).parent().prev().prev().prev().val()
-                    let region = new Path2D();
-                    region.moveTo(x,y)
-
-                    if(jQuery(this).parent().next().children("select").val() =="rect"){
-                        region.rect(x,y,
-                        jQuery(this).parent().prev().prev().val(), 
-                        jQuery(this).parent().prev().val());
-
-                    }
-                    else{
-                        region.arc(x,y,
-                        jQuery(this).parent().prev().val(),0, 2 * Math.PI);
-                    }
-                    region.closePath();
-                    ctx.globalAlpha = 0.7;
-                    ctx.stroke(region);
-                    ctx.fill(region);
-                    ctx.globalAlpha = 1;
-                })
-                ctx.fillStyle = "#950F0FFF";
-            }
 
             function drawCircle(x,y){
                 drawImage();
