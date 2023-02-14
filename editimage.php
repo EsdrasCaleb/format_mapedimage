@@ -323,6 +323,7 @@ else{
                     current_x = current_y.prev()
                     forma = current_weigth.parent().find(".cmbForma").val()  
                 }
+                drawImage()
             } 
 
             var changeLink = function(){
@@ -578,7 +579,6 @@ else{
             document.addEventListener('scroll',scrolFunction);
             $("#page").scroll(scrolFunction);
             scrolFunction();
-            drawImage();
 
         }
 
