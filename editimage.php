@@ -457,7 +457,7 @@ else{
                     var y = jQuery(this).parent().prev().prev().prev().val()
                     let region = new Path2D();
                     region.moveTo(x,y)
-                    ctx.globalAlpha = 0.3;
+                    ctx.globalAlpha = 0.5;
                     if(jQuery(this).parent().next().children("select").val() =="rect"){
                         region.rect(x,y,
                         jQuery(this).parent().prev().prev().val(), 
@@ -469,7 +469,7 @@ else{
                         jQuery(this).parent().prev().val(),0, 2 * Math.PI);
                     }
                     region.closePath();
-                    ctx.stroke();
+                    ctx.stroke(region);
                     ctx.fill(region);
                     ctx.globalAlpha = 1;
                 })
@@ -484,9 +484,9 @@ else{
                 var coordy = startY + ((y - startY) / 2);
                 var rad = ( Math.sqrt( ((startX-x)*(startX-x)) + ((startY-y)*(startY-y)) ) )/2
                 region.arc(coordx, coordy , rad,0, 2 * Math.PI);
-                ctx.stroke();
-                ctx.globalAlpha = 0.3;
                 region.closePath();
+                ctx.stroke(region);
+                ctx.globalAlpha = 0.5;
                 ctx.fill(region);
                 current_heigth.val(rad)
                 current_weigth.val(rad)
@@ -504,8 +504,8 @@ else{
                 var originy = startY>y?y:startY;
                 region.rect(originx, originy, sizex, sizey);
                 region.closePath();
-                ctx.stroke();
-                ctx.globalAlpha = 0.3;
+                ctx.stroke(region);
+                ctx.globalAlpha = 0.5;
                 ctx.fill(region);
                 current_heigth.val(sizey)
                 current_weigth.val(sizex)
