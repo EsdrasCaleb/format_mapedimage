@@ -27,14 +27,13 @@ class mapedimage_image_form extends moodleform {
     protected function definition() {
         $context           = $this->_customdata['context'];
         $attachmentoptions = $this->_customdata['attachmentoptions'];
-        $instanceeid       = $this->_customdata['id'];
         $courseid       = $this->_customdata['courseid'];
 
         $mform = $this->_form;
         $mform->addElement('hidden', 'id', $courseid);
         $mform->addElement('hidden', 'courseid', $courseid);
         $mform->addElement('hidden', 'image', true);
-        $mform->addElement('filemanager', 'bgimage_filemanager', "Imagem de navegação",null, $this->fileoptions);
+        $mform->addElement('filemanager', 'bgimage_filemanager', "Imagem de navegação",null, $attachmentoptions);
 
 
         $this->add_action_buttons(true, get_string('savechanges'));

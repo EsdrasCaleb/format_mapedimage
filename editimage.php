@@ -40,8 +40,10 @@ require_once($CFG->dirroot . '/repository/lib.php');
 require_once($CFG->dirroot . '/course/format/mapedimage/editimage_form.php');
 require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
 
-
-if($image){
+$imageRecord = $DB->get_record_sql("SELECT * from {files} 
+    where contextid={$context->id} and itemid={$courseid} and
+    component= 'format_mapedimage' and filearea='section' and filename <>'.'");
+if($image||!$imageRecord){
 
 
 /* Not exactly sure what this stuff does, but it seems fairly straightforward */
@@ -90,10 +92,6 @@ else{
     die();
 }
 }
-
-    $imageRecord = $DB->get_record_sql("SELECT * from {files} 
-    where contextid={$context->id} and itemid={$courseid} and
-    component= 'format_mapedimage' and filearea='section' and filename <>'.'");
     if($imageRecord){
         $imageUrl = moodle_url::make_pluginfile_url(
             $imageRecord->contextid,
@@ -260,6 +258,52 @@ else{
             var forma = null
             var currentSelect = null
 
+            var canvas = document.getElementById("imgmapcanvas");
+            var ctx = canvas.getContext("2d");
+            var imageWidth = img.naturalWidth; // this will be 1024 at max
+            var imageHeight = img.naturalHeight; // this will be 1024 at max
+            if(imageWidth>1024){
+                imageHeight = (imageHeight*1024)/imageWidth;
+                imageWidth = 1024;
+            }
+            jQuery("#imgmapcanvas").attr("height",imageHeight);
+
+            drawImage =function(){
+                ctx.globalAlpha = 1;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(img, 0,0,imageWidth,imageHeight);
+
+                jQuery(".rdSelect").each(function(){
+                    if(this==currentSelect.get(0)) {
+                        ctx.fillStyle = "#950F0FFF";
+                    }
+                    else{
+                        ctx.fillStyle = "#595959";
+                    }
+                    var x =jQuery(this).parent().prev().prev().prev().prev().val()
+                    var y = jQuery(this).parent().prev().prev().prev().val()
+                    let region = new Path2D();
+                    region.moveTo(x,y)
+
+                    if(jQuery(this).parent().next().children("select").val() =="rect"){
+                        region.rect(x,y,
+                            jQuery(this).parent().prev().prev().val(),
+                            jQuery(this).parent().prev().val());
+
+                    }
+                    else{
+                        region.arc(x,y,
+                            jQuery(this).parent().prev().val(),0, 2 * Math.PI);
+                    }
+                    region.closePath();
+                    ctx.globalAlpha = 0.7;
+                    ctx.stroke(region);
+                    ctx.fill(region);
+                    ctx.globalAlpha = 1;
+                })
+                ctx.fillStyle = "#950F0FFF";
+            }
+
             var addId = function(data){
                 jQuery("input").attr("disabled",false);
                 if(data){
@@ -325,6 +369,7 @@ else{
                     current_x = current_y.prev()
                     forma = current_weigth.parent().find(".cmbForma").val()  
                 }
+                drawImage()
             } 
 
             var changeLink = function(){
@@ -426,61 +471,28 @@ else{
             initiateBindings();
             removeBindings();
 
-            var imageWidth = img.naturalWidth; // this will be 1024 at max
-            var imageHeight = img.naturalHeight; // this will be 1024 at max
-            if(imageWidth>1024){
-                imageHeight = (imageHeight*1024)/imageWidth;
-                imageWidth = 1024;
-            }
-            jQuery("#imgmapcanvas").attr("height",imageHeight);
-            var canvas = document.getElementById("imgmapcanvas");
-            var ctx = canvas.getContext("2d");
+
+
             var canvasOffset = jQuery("#imgmapcanvas").offset();
             var offsetX = canvasOffset.left;
             var offsetY = canvasOffset.top;
             var startX;
             var startY;
             var isDown = false;
-            
 
-            drawImage =function(){
-                ctx.globalAlpha = 1;
-                ctx.clearRect(0, 0, imageWidth, imageHeight);
-                ctx.drawImage(img, 0,0,imageWidth,imageHeight);
-                jQuery(".rdSelect").each(function(){
-                    if(jQuery(this)==currentSelect)
-                        return true;
-                    var x =jQuery(this).parent().prev().prev().prev().prev().val() 
-                    var y = jQuery(this).parent().prev().prev().prev().val()
-                    ctx.moveTo(x,y)
-                    if(jQuery(this).parent().next().children("select").val() =="rect"){  
-                        ctx.rect(x,y,
-                        jQuery(this).parent().prev().prev().val(), 
-                        jQuery(this).parent().prev().val());
-
-                    }
-                    else{
-                        ctx.arc(x,y,
-                        jQuery(this).parent().prev().val(),0, 2 * Math.PI);
-                    }
-                    ctx.stroke();
-                    ctx.globalAlpha = 0.3;
-                    ctx.fill();
-                    ctx.globalAlpha = 1;
-                })
-            }
 
             function drawCircle(x,y){
                 drawImage();
-                ctx.moveTo(x,y)
-                ctx.beginPath();
+                let region = new Path2D();
+                region.moveTo(x,y)
                 var coordx = startX+((x-startX)/2);
                 var coordy = startY + ((y - startY) / 2);
                 var rad = ( Math.sqrt( ((startX-x)*(startX-x)) + ((startY-y)*(startY-y)) ) )/2
-                ctx.arc(coordx, coordy , rad,0, 2 * Math.PI);
-                ctx.stroke();
-                ctx.globalAlpha = 0.3;
-                ctx.fill();
+                region.arc(coordx, coordy , rad,0, 2 * Math.PI);
+                region.closePath();
+                ctx.stroke(region);
+                ctx.globalAlpha = 0.5;
+                ctx.fill(region);
                 current_heigth.val(rad)
                 current_weigth.val(rad)
                 current_y.val(coordy)
@@ -489,16 +501,17 @@ else{
 
             function drawRect(x,y){
                 drawImage();
-                ctx.moveTo(x,y);
-                ctx.beginPath();
+                let region = new Path2D();
+                region.moveTo(x,y)
                 var sizex = Math.abs(startX-x);
                 var sizey = Math.abs(startY-y);
                 var originx = startX>x?x:startX;
                 var originy = startY>y?y:startY;
-                ctx.rect(originx, originy, sizex, sizey);
-                ctx.stroke();
-                ctx.globalAlpha = 0.3;
-                ctx.fill();
+                region.rect(originx, originy, sizex, sizey);
+                region.closePath();
+                ctx.stroke(region);
+                ctx.globalAlpha = 0.5;
+                ctx.fill(region);
                 current_heigth.val(sizey)
                 current_weigth.val(sizex)
                 current_y.val(originy)
@@ -569,7 +582,6 @@ else{
             document.addEventListener('scroll',scrolFunction);
             $("#page").scroll(scrolFunction);
             scrolFunction();
-            drawImage();
 
         }
 
