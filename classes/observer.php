@@ -47,7 +47,6 @@ class format_mapedimage_observer {
             $courseformat = format_mapedimage::get_instance($event->objectid);
             $courseformat->delete_images();
             unset($courseformat);  // Destruct.
-            $DB->delete_records("format_mapedimage_image", array("courseid" => $event->objectid));
             $DB->delete_records("format_mapedimage_regions", array("courseid" => $event->objectid));
         }
     }

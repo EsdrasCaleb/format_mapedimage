@@ -2924,10 +2924,10 @@ class format_mapedimage extends course_format {
     /**
      * Returns a new instance of us so that specialised methods can be called.
      * @param int $courseid The course id of the course.
-     * @return format_trail object.
+     * @return format_mapedimage object.
      */
     public static function get_instance($courseid) {
-        return new format_trail('trail', $courseid);
+        return new format_mapedimage('mapedimage', $courseid);
     }
 
     /**
