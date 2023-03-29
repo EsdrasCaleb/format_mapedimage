@@ -137,6 +137,7 @@ class format_mapedimage extends course_format {
      * @return string The default value for the section name.
      */
     public function is_section0_attop() {
+        return $this->settings->hidesummary;
         if (is_null($this->section0attop)) {
             $this->section0attop = $this->get_summary_visibility($this->courseid)->showsummary == 1;
         }
@@ -632,6 +633,14 @@ class format_mapedimage extends course_format {
                     WHERE course = ?', array($courseid));
             }
             $courseformatoptions = array(
+                'hidetrack' => array(
+                    'default' => false,
+                    'type' => PARAM_BOOL,
+                ),
+                'hidesummary' => array(
+                    'default' => false,
+                    'type' => PARAM_BOOL,
+                ),
                 'numsections' => array(
                     'default' => $defaultnumsections,
                     'type' => PARAM_INT,
@@ -805,6 +814,26 @@ class format_mapedimage extends course_format {
                     'label' => new lang_string('numbersections', 'format_trail'),
                     'element_type' => 'select',
                     'element_attributes' => array($sectionmenu),
+                ),
+                'hidetrack' => array(
+                    'label' => "Esconder Trilha",
+                    'element_type' => 'select',
+                    'element_attributes' => array(
+                        array(
+                            0 => "Mostrar",
+                            1 => "Esconder"
+                        )
+                    ),
+                ),
+                'hidesummary' => array(
+                    'label' => "Esconder Sumario",
+                    'element_type' => 'select',
+                    'element_attributes' => array(
+                        array(
+                            0 => "Mostrar",
+                            1 => "Esconder"
+                        )
+                    ),
                 ),
                 'hiddensections' => array(
                     'label' => new lang_string('hiddensections'),

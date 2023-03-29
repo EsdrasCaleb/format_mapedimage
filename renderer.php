@@ -488,6 +488,12 @@ class format_mapedimage_renderer extends section_renderer {
             $this->make_block_image_editing($course->id, $urlpicedit);
         }
 
+        $hide = "";
+        if($this->settings['hidetrack'] ){
+            $hide= "display:none";
+        }
+        
+        echo html_writer::start_tag('div', array('style' => $hide));
         echo html_writer::start_tag('ul', array('class' => $trailiconsclass));
         // Print all of the image containers.
 
@@ -496,13 +502,13 @@ class format_mapedimage_renderer extends section_renderer {
         
         $this->make_block_icon_topics($coursecontext->id, $sections, $course, $editing, $hascapvishidsect, $urlpicedit);
         echo html_writer::end_tag('ul');
-
+        echo html_writer::end_tag('div');
         echo html_writer::end_tag('div');
 
         $rtl = right_to_left();
 
         $coursenumsections = $this->courseformat->get_last_section_number();
-
+        
         if (!(($course->coursedisplay == COURSE_DISPLAY_MULTIPAGE) && (!$editing))) {
             $trailshadeboxattributes = array('id' => 'trailshadebox');
             if ($defaultcustommousepointers == 2) { // Yes.
@@ -1080,7 +1086,7 @@ class format_mapedimage_renderer extends section_renderer {
 
                     if ($editing) {
                         if ($section == 0) {
-                            $this->make_block_icon_topic0_editing($course);
+                            //$this->make_block_icon_topic0_editing($course);
                         }
                         // Section greyed out by Justin 2016/05/14.
                         if (!$sectiongreyedout) {
@@ -1218,6 +1224,7 @@ class format_mapedimage_renderer extends section_renderer {
      * @return none
      */
     private function make_block_icon_topic0_editing($course) {
+        return '';
         $strdisplaysummary = get_string('display_summary', 'format_trail');
         $strdisplaysummaryalt = get_string('display_summary_alt', 'format_trail');
 

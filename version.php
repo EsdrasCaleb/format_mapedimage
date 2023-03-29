@@ -25,6 +25,7 @@
  * @copyright  &copy; 2022    Paul Krix and Julian Ridden. trail format
  *@author     Esdras Caleb - {@link http://github.com/esdrasCaleb/} 
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ * TODO ERRO SECTION name
  */
 
 defined('MOODLE_INTERNAL') || die();
