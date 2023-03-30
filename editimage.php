@@ -80,6 +80,7 @@ if ($mform->is_cancelled()) {
 
 
     $data = file_postupdate_standard_filemanager($formdata, 'bgimage', $fileoptions, $context, "format_mapedimage", $filearea, $courseid);    
+    redirect(new moodle_url($CFG->wwwroot . '/course/format/mapedimage/editimage.php?courseid=' . $course->id));    
 }
 else{
 
@@ -117,9 +118,9 @@ else{
         $coursesec = $DB->get_records("course_sections",array("course"=>$courseid));
         $sections = "";
         foreach($coursesec as $sec){
-            if($sec->section)
-                $sections .= "<option value='{$sec->section}'>".($sec->name?$sec->name:"Seção ".$sec->section)."</option>";
+            $sections .= "<option value='{$sec->section}'>".($sec->name?$sec->name:"Seção ".$sec->section)."</option>";
         }
+  
         ?>
         <div class="text-center">
         <canvas id="imgmapcanvas" width="1024" >
@@ -177,9 +178,7 @@ else{
                 <select class="cmbSection <?php echo $hideSecao;?>" name="section">
                     <?php 
                     foreach($coursesec as $sec){
-                        if($sec->section){
                             echo "<option ".($sec->section==$href?"selected='true'":"")." value='{$sec->section}'>".($sec->name?$sec->name:"Seção ".$sec->section)."</option>";
-                        }
                     }
 
                     

@@ -435,7 +435,7 @@ class format_mapedimage_renderer extends section_renderer {
                 'class' => 'info',
                 'role' => 'img',
                 'usemap'=>"#image-map",
-                'style'=>"width: 100%;height: auto;",
+                'style'=>"max-width: 1024;height: auto;",
                 'aria-label' => $course->fullname));
             //TODO MAPED AREAS
             /*
@@ -981,7 +981,7 @@ class format_mapedimage_renderer extends section_renderer {
                     if ($this->settings['sectiontitleboxposition'] == 2) {
                         echo html_writer::tag('div', $displaysectionname, $sectiontitleattribues);
                     }
-
+                    
                     if (($this->settings['newactivity'] == 2) && (isset($sectionupdated[$thissection->id]))) {
                         // The section has been updated since the user last visited this course, add NEW label.
                         echo html_writer::empty_tag('img', array(
@@ -1041,8 +1041,8 @@ class format_mapedimage_renderer extends section_renderer {
                         $bloqueado = $this->get_section_availability_bloqueado($thissection,
                                 has_capability('moodle/course:viewhiddensections', $coursecontext));
                     }
-                    echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
-                            $contextid, $thissection, $trailimagepath, $this->output, $bloqueado);
+                    /*echo $this->courseformat->output_section_image($section, $sectionname, $sectionimage,
+                            $contextid, $thissection, $trailimagepath, $this->output, $bloqueado);*/
 
                     echo html_writer::end_tag('div');
                     echo html_writer::end_tag('a');
@@ -1056,7 +1056,7 @@ class format_mapedimage_renderer extends section_renderer {
                     if ($this->settings['sectiontitleboxposition'] == 2) {
                         $content .= html_writer::tag('div', $displaysectionname, $sectiontitleattribues);
                     }
-
+                    
                     if (($this->settings['newactivity'] == 2) && (isset($sectionupdated[$thissection->id]))) {
                         $content .= html_writer::empty_tag('img', array(
                                     'class' => 'new_activity',
@@ -1177,7 +1177,7 @@ class format_mapedimage_renderer extends section_renderer {
 
         $streditimage = get_string('editimage', 'format_mapedimage');
         $streditimagealt = get_string('editimage', 'format_mapedimage');
-
+        
         echo html_writer::link(
                 $this->courseformat->mapedimage_moodle_url('editimage.php', array(
                     'courseid' => $courseid)

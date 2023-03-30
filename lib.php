@@ -137,7 +137,7 @@ class format_mapedimage extends course_format {
      * @return string The default value for the section name.
      */
     public function is_section0_attop() {
-        return $this->settings->hidesummary;
+        return 0;
         if (is_null($this->section0attop)) {
             $this->section0attop = $this->get_summary_visibility($this->courseid)->showsummary == 1;
         }
@@ -637,10 +637,6 @@ class format_mapedimage extends course_format {
                     'default' => false,
                     'type' => PARAM_BOOL,
                 ),
-                'hidesummary' => array(
-                    'default' => false,
-                    'type' => PARAM_BOOL,
-                ),
                 'numsections' => array(
                     'default' => $defaultnumsections,
                     'type' => PARAM_INT,
@@ -817,16 +813,6 @@ class format_mapedimage extends course_format {
                 ),
                 'hidetrack' => array(
                     'label' => "Esconder Trilha",
-                    'element_type' => 'select',
-                    'element_attributes' => array(
-                        array(
-                            0 => "Mostrar",
-                            1 => "Esconder"
-                        )
-                    ),
-                ),
-                'hidesummary' => array(
-                    'label' => "Esconder Sumario",
                     'element_type' => 'select',
                     'element_attributes' => array(
                         array(
@@ -2178,6 +2164,7 @@ class format_mapedimage extends course_format {
                 array('courseid' => $courseid), '', 'sectionid, image, displayedimageindex')) {
             $sectionimagecontainers = false;
         }
+
         return $sectionimagecontainers;
     }
 
@@ -2606,19 +2593,7 @@ class format_mapedimage extends course_format {
                         'alt' => $sectionname,
                         'role' => 'img',
                         'aria-label' => $sectionname));
-        } else if ($section == 0) {
-            $imgurl = $output->image_url('info', 'format_trail');
-            // Alterado por Jota.
-            if ($bloqueado > 0) {
-                $imgurl = $CFG->wwwroot . '/course/format/trail/pix/lock.png';
-            }
-            $content = html_writer::empty_tag('img', array(
-                        'src' => $imgurl,
-                        'alt' => $sectionname,
-                        'class' => 'info',
-                        'role' => 'img',
-                        'aria-label' => $sectionname));
-        }
+        } 
         return $content;
     }
 
