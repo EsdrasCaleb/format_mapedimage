@@ -3004,23 +3004,6 @@ class format_mapedimage extends course_format {
         return $rv;
     }
 
-    /**
-     * Get context.
-     *
-     * @return \sdtClass
-     */
-    private function get_context() {
-        global $SITE;
-
-        if ($SITE->id == $this->courseid) {
-            // Use the context of the page which should be the course category.
-            global $PAGE;
-            return $PAGE->context;
-        } else {
-            return context_course::instance($this->courseid);
-        }
-    }
-
 }
 
 /**
