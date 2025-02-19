@@ -31,8 +31,8 @@ use core_courseformat\output\section_renderer;
 use core_availability\info;
 use core_availability\info_section;
 
-require_once($CFG->dirroot . '/course/format/renderer.php');
-require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
+//require_once($CFG->dirroot . '/course/format/renderer.php');
+//require_once($CFG->dirroot . '/course/format/mapedimage/lib.php');
 
 
 class format_mapedimage_renderer extends section_renderer {
