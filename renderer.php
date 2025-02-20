@@ -372,7 +372,7 @@ class format_mapedimage_renderer extends section_renderer {
      * @param array $modnamesused
      */
     public function print_multiple_section_page($course, $sections, $mods, $modnames, $modnamesused) {
-        global $USER,$DB;
+        global $USER,$DB,$CFG;
 
         $coursecontext = context_course::instance($course->id);
         $editing = $this->page->user_is_editing();
