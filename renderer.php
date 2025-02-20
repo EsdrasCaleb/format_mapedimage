@@ -750,6 +750,7 @@ class format_mapedimage_renderer extends section_renderer {
                             array('id' => $sectionzero->id)),
                     html_writer::empty_tag('img', array('src' => $urlpicedit,
                         'alt' => $streditsummary,
+                        'style' => 'height: 1em;',
                         'class' => 'iconsmall edit')), array('title' => $streditsummary));
         }
         echo html_writer::end_tag('div');
@@ -1185,6 +1186,7 @@ class format_mapedimage_renderer extends section_renderer {
                 ), html_writer::empty_tag('img', array(
                     'src' => $urlpicedit,
                     'alt' => $streditimagealt,
+                    'style' => 'height: 1em;',
                     'role' => 'img',
                     'aria-label' => $streditimagealt)) . '&nbsp;' . $streditimage, array('title' => $streditimagealt)
         );
@@ -1213,6 +1215,7 @@ class format_mapedimage_renderer extends section_renderer {
                 ), html_writer::empty_tag('img', array(
                     'src' => $urlpicedit,
                     'alt' => $streditimagealt,
+                'style' => 'height: 1em;',
                     'role' => 'img',
                     'aria-label' => $streditimagealt)) . '&nbsp;' . $streditimage, array('title' => $streditimagealt)
         );
@@ -1342,6 +1345,7 @@ class format_mapedimage_renderer extends section_renderer {
                             new moodle_url('editsection.php',
                                     array('id' => $thissection->id)),
                             html_writer::empty_tag('img', array('src' => $urlpicedit, 'alt' => $streditsummary,
+                                'style' => 'height: 1em;',
                                 'class' => 'iconsmall edit')), array('title' => $streditsummary));
                 }
                 echo html_writer::end_tag('div');
